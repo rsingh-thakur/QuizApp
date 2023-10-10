@@ -15,7 +15,6 @@ public class UserRequest {
 	private String emailAddress;
 	
 	private String password;
-
-	private String imagePath;
-
+	
+	private String userType;
 }
