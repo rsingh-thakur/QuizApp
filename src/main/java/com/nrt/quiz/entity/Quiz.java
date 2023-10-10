@@ -1,11 +1,7 @@
 package com.nrt.quiz.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -13,12 +9,18 @@ import java.util.Set;
 @AllArgsConstructor
 @ToString
 @Entity
-@Table(name = "categoryEntity")
-public class CategoryEntity {
+@Table(name = "quiz_details")
+public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String title;
     private String description;
+    private String maxMarks;
+    private String numberOfQuestions;
+    private boolean active= false;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Category categories;
 
 }
