@@ -30,11 +30,11 @@ public class User {
 	@Column(name = "last_name")
 	private String lastName;
 
+	@Column(name = "user_type")
+	private String userType;
+
 	@Column(name = "email_address")
 	private String emailAddress;
-
-	@Column(name = "username")
-	private String username;
 
 	@Column(name = "password")
 	private String password;
