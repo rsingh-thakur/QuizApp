@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,6 +23,13 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
+	//for index page
+	@RequestMapping("/")
+	public String homePage() {
+		return"index";
+	}
+	
+	//for user login page
 	@GetMapping("/page/login")
 	public ModelAndView getLoginPage(ModelAndView modelAndView) {
 		log.info("home controller invoked ..");
@@ -31,6 +39,7 @@ public class UserController {
 
 	}
 
+	//for user registration page
 	@GetMapping("/page/registration")
 	public ModelAndView getRegistrationPage(ModelAndView modelAndView) {
 		log.info("registration controller invoked ..");
