@@ -25,4 +25,13 @@ public class Category {
     @JsonIgnore
     private Set<Quiz> quiz= new LinkedHashSet<>();
 
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private long cid;
+//    private String title;
+//    private String description;
+//
+//    @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL)
+//    @JsonIgnore
+//    private Set<QuizEntity> quizEntities= new LinkedHashSet<>();
 }
