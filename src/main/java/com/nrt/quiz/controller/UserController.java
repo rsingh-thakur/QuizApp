@@ -23,13 +23,13 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	//for index page
+	// for index page
 	@RequestMapping("/")
 	public String homePage() {
-		return"index";
+		return "index";
 	}
-	
-	//for user login page
+
+	// for user login page
 	@GetMapping("/page/login")
 	public ModelAndView getLoginPage(ModelAndView modelAndView) {
 		log.info("home controller invoked ..");
@@ -39,7 +39,7 @@ public class UserController {
 
 	}
 
-	//for user registration page
+	// for user registration page
 	@GetMapping("/page/registration")
 	public ModelAndView getRegistrationPage(ModelAndView modelAndView) {
 		log.info("registration controller invoked ..");
