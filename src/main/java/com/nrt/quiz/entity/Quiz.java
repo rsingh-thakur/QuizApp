@@ -23,4 +23,15 @@ public class Quiz {
     @ManyToOne(fetch = FetchType.EAGER)
     private Category categories;
 
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private long qid;
+//    private String title;
+//    private String description;
+//    private String maxMarks;
+//    private String numberOfQuestions;
+//    private boolean active= false;
+//
+//    @ManyToOne(fetch = FetchType.EAGER)
+//    private CategoryEntity categoryEntity;
 }
