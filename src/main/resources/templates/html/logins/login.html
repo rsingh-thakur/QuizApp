@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
 	<title>Login page</title>
@@ -19,7 +19,7 @@
 
 <body style="background-color: aliceblue;">
 
-<div > <h3 th:if="${successMessage}"></h3></div>
+	<div id="result"></div>
 
 	<!--	login page code start here -->
 
@@ -30,26 +30,26 @@
 					<div class="card rounded-3 text-black">
 						<div class="row g-0" style="box-shadow: 5px 5px 10px 2px rgb(128, 128, 128);">
 							<div class="col-lg-6">
-								<div class="card-body p-md-0 mx-md-5"> 
+								<div class="card-body p-md-0 mx-md-5">
 									<div class="text-center">
 										<img src="https://png.pngtree.com/png-vector/20220827/ourmid/pngtree-quiz-time-png-image_6125411.png"
 											style="width:150px;" alt="logo">
 										<h4 class="pb-3">Login Page </h4>
 									</div>
 
-									<form action="/login" method="post">
+									<form id="formId">
 
 										<div class="form-outline mb-4">
 											<label class="form-label" for="form2Example11">Email Address</label>
-											<input type="text" id="form2Example11" class="form-control"
-												placeholder="Enter email address" name="userId" />
+											<input type="text" id="email" class="form-control"
+												placeholder="Enter email address" name="email" />
 
 										</div>
 
 										<div class="form-outline mb-4">
 											<label class="form-label" for="form2Example22">Password</label>
-											<input type="password" id="form2Example22" class="form-control"
-												name="password" placeholder="Enter your password" />
+											<input type="password" id="password" class="form-control" name="password"
+												placeholder="Enter your password" />
 										</div>
 
 										<div class="text-center pt-1 pb-1">
@@ -63,7 +63,7 @@
 
 										<div class="d-flex align-items-center justify-content-center pb-4">
 											<p class="mb-0 me-2">Don't have an account?</p>
-											<a href="/page/registration" class="btn btn-outline-danger">Create
+											<a href="/user/page/registration" class="btn btn-outline-danger">Create
 												new</a>
 										</div>
 
@@ -87,6 +87,59 @@
 			</div>
 		</div>
 	</section>
+
+
+
+	<script>
+
+		document.addEventListener("submit", function (event) {
+
+			const userId = document.getElementById("email");
+			const password = document.getElementById("password");
+
+			const headers = new Headers({
+				'Content-Type': 'application/json', // Specify content type
+			});
+
+			const requestBody = {
+				email: userId,
+				password: password
+			};
+
+			const url = "http:localhost:9090/user/login"
+
+
+			const options = {
+				method: 'GET',
+				headers: headers,
+				body: JSON.stringify(requestBody)
+			};
+
+
+			fetch(url, options)
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					document.getElementById("name").textContent = data.name;
+					document.getElementById("email").textContent = data.email;
+				})
+				.then(data => {
+					console.log(data);
+					// Handle the response data here
+					document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+				})
+				.catch(error => {
+					// Handle errors
+					console.log(data);
+					document.getElementById('result').innerText = 'Error: ' + error.message;
+				});
+		});
+	</script>
+
+
+
+
+
 </body>
 
 </html>

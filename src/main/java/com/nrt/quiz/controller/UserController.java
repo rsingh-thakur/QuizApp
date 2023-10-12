@@ -1,45 +1,51 @@
 package com.nrt.quiz.controller;
 
+import java.sql.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.nrt.quiz.entity.User;
+import com.nrt.quiz.request.LoginRequest;
 import com.nrt.quiz.request.UserRequest;
+import com.nrt.quiz.response.LoginResponse;
 import com.nrt.quiz.service.UserService;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Controller
+@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
 	UserService userService;
 
-	//for index page
+	// for index page
 	@RequestMapping("/")
 	public String homePage() {
-		return"index";
+		return "index";
 	}
-	
-	//for user login page
+
+	// for user login page
 	@GetMapping("/page/login")
 	public ModelAndView getLoginPage(ModelAndView modelAndView) {
-		log.info("home controller invoked ..");
 		modelAndView.setViewName("html/logins/login");
-		log.info(" 222home controller invoked ..");
 		return modelAndView;
 
 	}
 
-	//for user registration page
+	// for user registration page
 	@GetMapping("/page/registration")
 	public ModelAndView getRegistrationPage(ModelAndView modelAndView) {
 		log.info("registration controller invoked ..");
@@ -64,20 +70,18 @@ public class UserController {
 
 	}
 
-	@PostMapping("/login")
-	public ModelAndView userLogin(ModelAndView modelAndView, @RequestParam("userId") String userId,
-			@RequestParam("password") String password) {
+	@SuppressWarnings("deprecation")
+	@GetMapping("/login")
+	public ResponseEntity<LoginResponse> userLogin(@RequestBody LoginRequest loginRequest) {
 		log.info("login controller invoked ..");
 
-		Boolean isLoggedIn = userService.login(userId, password);
+		Boolean isLoggedIn = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
 		if (isLoggedIn) {
-
-			modelAndView.setViewName("/html/Dashboards/adminDashboard");
-			return modelAndView;
-		} else
-			modelAndView.addObject("successMessage", "login faild  ..");
-		modelAndView.setViewName("html/logins/responsePage");
-		return modelAndView;
+			return new ResponseEntity<LoginResponse>(
+					new LoginResponse("jwtToken will be passed", new Date(new java.util.Date().getDate())),
+					HttpStatusCode.valueOf(200));
+		}
+		return new ResponseEntity<LoginResponse>(HttpStatusCode.valueOf(403));
 
 	}
 
