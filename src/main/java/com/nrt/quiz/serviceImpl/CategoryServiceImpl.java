@@ -141,11 +141,6 @@ public class CategoryServiceImpl implements CategoryService {
         try {
             Optional<Category> category = this.categoryRepository.findById(categoryId);
             if (category.isPresent()) {
-                //  CategoryEntity categoryEntity= new CategoryEntity();
-                //  categoryEntity.setCid(categoryID);
-                //  this.categoryRepository.delete(categoryEntity);
-
-                // below one is easy single line code
 
                 this.categoryRepository.deleteById(categoryId);
                 return ResponseEntity.ok(new ApiResponse<>("success", "Data deleted successfully", null, 200));

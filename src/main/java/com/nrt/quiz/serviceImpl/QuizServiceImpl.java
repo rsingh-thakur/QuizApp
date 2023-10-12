@@ -92,7 +92,7 @@ public class QuizServiceImpl implements QuizService {
             if (categoryId != null && active != null) {
                 Category category= new Category();
                 category.setId(categoryId);
-                quizPage = quizRepository.findByCategoriesAndActive(category,active, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("qid"))));
+                quizPage = quizRepository.findByCategoriesAndActive(category,active, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("id"))));
             }
             else if (id != null) {
                 Optional<Quiz> categoryOptional = quizRepository.findById(id);
@@ -104,17 +104,17 @@ public class QuizServiceImpl implements QuizService {
                 }
             }
             else if (name != null) {
-                quizPage = quizRepository.findByTitleContaining(name, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("qid"))));
+                quizPage = quizRepository.findByTitleContaining(name, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("id"))));
             }
             else if (categoryId != null) {
                 Category category= new Category();
                 category.setId(categoryId);
-                quizPage = quizRepository.findByCategories(category, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("qid"))));
+                quizPage = quizRepository.findByCategories(category, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("id"))));
             }else if (active != null) {
-                quizPage = quizRepository.findByActive(active, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("qid"))));
+                quizPage = quizRepository.findByActive(active, PageRequest.of(page - 1, perPageRecord, Sort.by(Sort.Order.desc("id"))));
             }
             else {
-                quizPage = quizRepository.findAll(PageRequest.of(page - 1, perPageRecord,Sort.by(Sort.Order.desc("qid"))));
+                quizPage = quizRepository.findAll(PageRequest.of(page - 1, perPageRecord,Sort.by(Sort.Order.desc("id"))));
             }
 
             List<Quiz> quizzes = quizPage.getContent();
