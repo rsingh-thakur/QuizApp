@@ -3,6 +3,7 @@ package com.nrt.quiz.util;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
+import java.sql.Date;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -12,6 +13,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nrt.quiz.constants.Constants;
+import com.nrt.quiz.entity.User;
+import com.nrt.quiz.request.UserRequest;
+import com.nrt.quiz.response.UserResponse;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -81,12 +85,49 @@ public class CommonUtil {
 		}
 
 	}
+
+	public static String changeToString(Object data) {
+		String stringData = String.valueOf(data);
+		return stringData;
+	}
+
+	// Decript the user details
+	public static UserResponse decriptUser(User user) {
+		UserResponse response = new UserResponse();
+		if (user != null) {
+			response.setFirstName(CommonUtil.decrypt(user.getFirstName()));
+			response.setLastName(CommonUtil.decrypt(user.getLastName()));
+			response.setEmailAddress(CommonUtil.decrypt(user.getEmailAddress()));
+			response.setUserType(CommonUtil.decrypt(user.getUserType()));
+			response.setAddress(CommonUtil.decrypt(user.getAddress()));
+			response.setPhone(CommonUtil.decrypt(user.getPhone()));
+			response.setUserId(user.getId());
+			response.setCreated_At((user.getCreationDate()));
+			if (user.getRole() != null)
+				response.setRole(CommonUtil.decrypt(user.getRole().getName()));
+		}
+		return response;
+	}
+
 	
+	// encript the user details
+	@SuppressWarnings("deprecation")
+	public static User encriptUserDetails(UserRequest userRequest) {
+		User user = new User();
+		if (userRequest != null) {
+			user.setFirstName(CommonUtil.encrypt(userRequest.getFirstName()));
+			user.setLastName(CommonUtil.encrypt(userRequest.getFirstName()));
+			user.setEmailAddress(CommonUtil.encrypt(userRequest.getEmailAddress()));
+			user.setPassword(CommonUtil.encrypt(userRequest.getPassword()));
+			user.setUserType(CommonUtil.encrypt(userRequest.getUserType()));
+			user.setCreationDate(new Date(new java.util.Date().getDate()));
+			user.setAddress(CommonUtil.encrypt(userRequest.getAddress()));
+			user.setPhone(CommonUtil.encrypt(userRequest.getPhone()));
+		}
+		return user;
+	}
+
 	
-	  public static String changeToString(Object data) {
-		  String stringData = String.valueOf(data);
-		  return stringData;
-	  }
 	
 
 }

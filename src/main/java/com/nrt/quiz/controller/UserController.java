@@ -44,7 +44,8 @@ public class UserController {
 		return modelAndView;
 
 	}
-	@GetMapping("/page/userUpdate")
+
+	@GetMapping("/page/updateUser")
 	public ModelAndView getUserUpdatePage(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/logins/updateUser");
 		return modelAndView;
@@ -115,6 +116,22 @@ public class UserController {
 		} else {
 			return new ResponseEntity<ApiResponse<List<UserResponse>>>(
 					new ApiResponse<List<UserResponse>>("Failed", "user records not found", userResponse, 404),
+					HttpStatus.NO_CONTENT);
+		}
+
+	}
+	
+   // update the user details 
+	@PostMapping("/updateUser")
+	public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest userRequest) {
+		UserResponse udpatedUser = userService.updateUserDetails(userRequest);
+		if (udpatedUser != null) {
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("success", "user datails is updated successfully", udpatedUser, 200),
+					HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("Failed", "failed to update or user does not eixts", udpatedUser, 404),
 					HttpStatus.NO_CONTENT);
 		}
 

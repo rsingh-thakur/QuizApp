@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Registration page</title>
+	<link rel="stylesheet" href="loginCss.css">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+
+	<style>
+		.gradient-custom-2 {
+			background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+		}
+
+		input {
+			padding-bottom: 10px;
+			margin-bottom: 10px;
+		}
+
+		label {
+			margin-bottom: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<section class="h-100 gradient-form" style="margin: 30px;">
+		<div class="container py-2 h-100">
+			<div class="row d-flex justify-content-center align-items-center">
+				<div class="col-xl-9">
+					<div class="card rounded-3 text-black">
+						<div class="row g-0" style="box-shadow: 5px 5px 10px 2px rgb(128, 128, 128);">
+							<div class="col-lg-6">
+								<div class="card-body p-md-0 mx-md-5">
+									<div class="text-center">
+										<img src="https://png.pngtree.com/png-vector/20220827/ourmid/pngtree-quiz-time-png-image_6125411.png"
+											style="width:150px;" alt="logo">
+										<h4 class="pb-3">Registration Page </h4>
+									</div>
+									<form action="/user/register" method="post" enctype="multipart/form-data">
+										<div class="form-group">
+											<label for="firstName">First Name:</label>
+											<input type="text" id="firstName" name="firstName" class="form-control"
+												style="width: 100%;" required placeholder="Enter first name">
+										</div>
+
+										<div class="form-group">
+											<label for="lastName">Last Name:</label>
+											<input type="text" id="lastName" name="lastName" class="form-control"
+												required placeholder="Enter last name">
+										</div>
+
+										<div class="form-group">
+											<label for="emailAddress">Email Address:</label>
+											<input type="email" id="emailAddress" name="emailAddress"
+												class="form-control" required placeholder="Enter email address">
+										</div>
+
+										<div class="form-group">
+											<label for="password">Password:</label>
+											<input type="password" id="password" name="password" class="form-control"
+												required placeholder="Enter password">
+										</div>
+
+										<div class="form-group">
+											<label for="userType">User Type:</label>
+											<select id="userType" name="userType" class="form-control"
+												style="width: 100%;" required placeholder="Select User Type">
+												<option value="student">Student</option>
+												<option value="teacher">Teacher</option>
+											</select>
+										</div>
+
+										<div class="form-group">
+											<label for="imagePath">Profile Image:</label>
+											<br>
+											<input type="file" id="imagePath" name="image" class="form-control-file"
+												required>
+										</div>
+
+										<button type="submit"
+											class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3 w-100">Register</button>
+										<div class="d-flex align-items-center justify-content-center pb-4">
+											<p class="mb-0 me-2">Already registered ?</p>
+											<a href="/user/page/login" class="btn btn-outline-danger">Sign In
+											</a>
+										</div>
+									</form>
+								</div>
+							</div>
+
+							<div class="col-lg-6 d-flex align-items-center gradient-custom-2">
+								<div class="text-white px-3 py-4 p-md-5 mx-md-4">
+									<h4 class="mb-4">Quiz Time! Join the Fun and Test Your Knowledge</h4>
+									<p class="small mb-0">* Quizzes can serve as a valuable tool to reinforce and
+										consolidate
+										the knowledge gained in the classroom. * They help students review and
+										remember
+										Preparing for quizzes encourages students to manage their time effectively.
+										* This skill is essential for academic success and life in general..</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+</body>
+
+</html>

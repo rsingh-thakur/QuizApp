@@ -44,7 +44,6 @@
 											<input type="email" id="email" class="form-control"
 												placeholder="Enter email address" name="email" autofocus required
 												autocomplete="given-name" />
-
 										</div>
 
 										<div class="form-outline mb-4">
@@ -89,7 +88,7 @@
 		</div>
 	</section>
 
-	
+
 	<script>
 
 		function login() {
@@ -115,7 +114,7 @@
 						window.location.href = "http://localhost:9090/user/";
 
 
-					} else if(data.status === 403) {
+					} else if (data.status === 403) {
 						alert("Login failed. Please check your credentials.1");
 
 					} else {

@@ -15,4 +15,6 @@ public interface UserService {
 
 	public UserResponse getUserDetails(String userId);
 
+	public UserResponse updateUserDetails(UserRequest userRequest);
+
 }
