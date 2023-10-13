@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class UserResponse {
 
-	private long uesrId;
+	private long userId;
 
 	private String firstName;
 
@@ -21,6 +21,10 @@ public class UserResponse {
 	private String userType;
 
 	private Date created_At;
+	
+	private String Address;
+	
+	private String phone;
 
 	private String role;
 

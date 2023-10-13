@@ -37,10 +37,24 @@ public class UserController {
 		return "index";
 	}
 
-	// for user login page
+	// for user profile page
 	@GetMapping("/page/login")
 	public ModelAndView getLoginPage(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/logins/login");
+		return modelAndView;
+
+	}
+	@GetMapping("/page/userUpdate")
+	public ModelAndView getUserUpdatePage(ModelAndView modelAndView) {
+		modelAndView.setViewName("html/logins/updateUser");
+		return modelAndView;
+	}
+
+	// for user login page
+	@GetMapping("/page/profile")
+	public ModelAndView getProfilePage(ModelAndView modelAndView) {
+		log.info("getProfilePage controller called ..");
+		modelAndView.setViewName("html/logins/profile");
 		return modelAndView;
 
 	}
@@ -69,7 +83,8 @@ public class UserController {
 		}
 
 	}
-    // get user login 
+
+	// get user login
 	@SuppressWarnings("deprecation")
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
@@ -104,18 +119,22 @@ public class UserController {
 		}
 
 	}
-	
-   // get single user details
+
+	// get single user details
 	@GetMapping("/user")
 	public ResponseEntity<ApiResponse<UserResponse>> getUser(@RequestParam("userId") String userId) {
+		log.info("getUser controller invoked .." + userId);
 		UserResponse userResponse = userService.getUserDetails(userId);
-		if (userResponse.getEmailAddress()!=null) {
-			return new ResponseEntity<ApiResponse<UserResponse>>(
-					new ApiResponse<UserResponse>("success", "user details fetched successfully", userResponse, 200),
-					HttpStatus.OK);
+
+		if (userResponse.getEmailAddress() != null) {
+			ApiResponse<UserResponse> apiResponse = new ApiResponse<UserResponse>("success",
+					"user details fetched successfully", userResponse, 200);
+			return new ResponseEntity<>(apiResponse, null, HttpStatus.OK);
 		}
-		return new ResponseEntity<ApiResponse<UserResponse>>(
-				new ApiResponse<UserResponse>("Failed", "user does not eixts not found", null, 404), HttpStatus.NOT_FOUND);
+		ApiResponse<UserResponse> apiResponse = new ApiResponse<UserResponse>("Failed",
+				" user details  failed to fetch~", null, 200);
+
+		return new ResponseEntity<>(apiResponse, null, HttpStatus.NOT_FOUND);
 
 	}
 

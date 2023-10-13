@@ -42,6 +42,12 @@ public class User {
 	@Column(name = "image_Path")
 	private String imagePath;
 
+	@Column(name = "phone")
+	private String phone;
+
+	@Column(name = "address")
+	private String address;
+
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	private Role role;
