@@ -1,14 +1,18 @@
 package com.nrt.quiz.service;
 
-import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
-import com.nrt.quiz.entity.User;
 import com.nrt.quiz.request.UserRequest;
+import com.nrt.quiz.response.UserResponse;
 
 public interface UserService {
-	
-	public User createUser(UserRequest userRequst,MultipartFile file);
+
+	public UserResponse createUser(UserRequest userRequst);
 
 	public Boolean login(String userId, String password);
+
+	public List<UserResponse> getAllUesrsList();
+
+	public UserResponse getUserDetails(String userId);
 
 }

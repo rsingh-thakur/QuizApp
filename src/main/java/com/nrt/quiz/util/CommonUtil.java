@@ -81,5 +81,12 @@ public class CommonUtil {
 		}
 
 	}
+	
+	
+	  public static String changeToString(Object data) {
+		  String stringData = String.valueOf(data);
+		  return stringData;
+	  }
+	
 
 }

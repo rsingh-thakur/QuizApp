@@ -1,24 +1,24 @@
 package com.nrt.quiz.controller;
 
 import java.sql.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.nrt.quiz.entity.User;
 import com.nrt.quiz.request.LoginRequest;
 import com.nrt.quiz.request.UserRequest;
+import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.response.LoginResponse;
+import com.nrt.quiz.response.UserResponse;
 import com.nrt.quiz.service.UserService;
 
 import lombok.extern.log4j.Log4j2;
@@ -55,33 +55,67 @@ public class UserController {
 	}
 
 	@PostMapping("/register")
-	public ModelAndView createNewUser(@ModelAttribute UserRequest userRequest, ModelAndView modelAndView,
-			@RequestParam("image") MultipartFile file) {
-		User user = userService.createUser(userRequest, file);
-		if (user != null) {
-			modelAndView.addObject("successMessage", "Your Registration Completed successfully ..!");
-			modelAndView.setViewName("html/logins/login");
-			return modelAndView;
+	public ResponseEntity<ApiResponse<UserResponse>> createNewUser(@RequestBody UserRequest userRequest) {
+		UserResponse userResponse = userService.createUser(userRequest);
+		log.info("register controller invoked ..");
+		if (userResponse != null) {
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("success", "User Registered successfully", userResponse, 201),
+					HttpStatus.CREATED);
 		} else {
-			modelAndView.addObject("successMessage", "failed to create user ..");
-			modelAndView.setViewName("html/logins/responsePage");
-			return modelAndView;
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("Failed", "User Registeration Failed", userResponse, 400),
+					HttpStatus.BAD_REQUEST);
 		}
 
 	}
-
+    // get user login 
 	@SuppressWarnings("deprecation")
-	@GetMapping("/login")
-	public ResponseEntity<LoginResponse> userLogin(@RequestBody LoginRequest loginRequest) {
+	@PostMapping("/login")
+	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
 		log.info("login controller invoked ..");
 
 		Boolean isLoggedIn = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
 		if (isLoggedIn) {
-			return new ResponseEntity<LoginResponse>(
-					new LoginResponse("jwtToken will be passed", new Date(new java.util.Date().getDate())),
-					HttpStatusCode.valueOf(200));
+			LoginResponse loginResponse = new LoginResponse("jwtToken will be passed",
+					new Date(new java.util.Date().getDate()));
+			log.info("login controller true.");
+			return new ResponseEntity<ApiResponse<LoginResponse>>(
+					new ApiResponse<>("success", "user logged successfully", loginResponse, 200), HttpStatus.OK);
 		}
-		return new ResponseEntity<LoginResponse>(HttpStatusCode.valueOf(403));
+		log.info("login controller False.");
+		return new ResponseEntity<ApiResponse<LoginResponse>>(
+				new ApiResponse<>("Failed", "user login failed", null, 403), HttpStatus.FORBIDDEN);
+
+	}
+
+	// get all users list
+	@GetMapping("/userList")
+	public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
+		List<UserResponse> userResponse = userService.getAllUesrsList();
+		if (userResponse != null) {
+			return new ResponseEntity<ApiResponse<List<UserResponse>>>(
+					new ApiResponse<List<UserResponse>>("success", "data fatched successfully", userResponse, 200),
+					HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ApiResponse<List<UserResponse>>>(
+					new ApiResponse<List<UserResponse>>("Failed", "user records not found", userResponse, 404),
+					HttpStatus.NO_CONTENT);
+		}
+
+	}
+	
+   // get single user details
+	@GetMapping("/user")
+	public ResponseEntity<ApiResponse<UserResponse>> getUser(@RequestParam("userId") String userId) {
+		UserResponse userResponse = userService.getUserDetails(userId);
+		if (userResponse.getEmailAddress()!=null) {
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("success", "user details fetched successfully", userResponse, 200),
+					HttpStatus.OK);
+		}
+		return new ResponseEntity<ApiResponse<UserResponse>>(
+				new ApiResponse<UserResponse>("Failed", "user does not eixts not found", null, 404), HttpStatus.NOT_FOUND);
 
 	}
 
