@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title>update</title>
@@ -77,41 +77,39 @@
 										<div class="form-group">
 											<label for="firstName">First Name:</label>
 											<input type="text" id="firstName" name="firstName" class="form-control"
-												style="width: 100%;" required placeholder="Enter first name">
+												style="width: 100%;" required placeholder="Enter first name"
+												th:value="${user.firstName}">
 										</div>
 
 										<div class="form-group">
 											<label for="lastName">Last Name:</label>
 											<input type="text" id="lastName" name="lastName" class="form-control"
-												required placeholder="Enter last name">
+												required placeholder="Enter last name" th:value="${user.lastName}">
 										</div>
 
 										<div class="form-group">
 											<label for="emailAddress">Email Address:</label>
 											<input type="email" id="emailAddress" name="emailAddress"
-												class="form-control" required placeholder="Enter email address">
-										</div>
-
-										<div class="form-group">
-											<label for="password">Password:</label>
-											<input type="password" id="password" name="password" class="form-control"
-												required placeholder="Enter password">
+												class="form-control" required placeholder="Enter email address"
+												th:value="${user.emailAddress}">
 										</div>
 
 										<div class="form-group">
 											<label for="phone">Phone:</label>
 											<input type="tel" id="phone" name="phone" class="form-control"
-												placeholder="Enter phone number">
+												placeholder="Enter phone number" th:value="${user.phone}">
 										</div>
 										<div class="form-group">
 											<label for="address">Address</label>
 											<textarea type="text" id="address" name="address" class="form-control"
-												placeholder="Enter Full Address "></textarea>
+												placeholder="Enter Full Address "
+												th:value="${user.Address}"> </textarea>
 										</div>
 										<div class="form-group">
 											<label for="userType">User Type:</label>
 											<select id="userType" name="userType" class="form-control"
-												style="width: 100%;" required placeholder="Select User Type">
+												style="width: 100%;" required placeholder="Select User Type"
+												th:value="${user.userType}">
 												<option value="student">Student</option>
 												<option value="teacher">Teacher</option>
 											</select>
@@ -120,7 +118,7 @@
 										<br>
 										<button type="submit" onclick="updateUser()"
 											class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3 w-100">Update</button>
-
+										<input type="hidden" id="userId" th:value="${user.userId}">
 									</form>
 								</div>
 							</div>
@@ -147,20 +145,21 @@
 	<script>
 
 		function updateUser() {
+
+			const userId = document.getElementById('userId').value;
 			const firstName = document.getElementById('firstName').value;
 			const lastName = document.getElementById('lastName').value;
 			const emailAddress = document.getElementById('emailAddress').value;
-			const password = document.getElementById('password').value;
 			const userType = document.getElementById('userType').value;
 			const phone = document.getElementById('phone').value;
 			const address = document.getElementById('address').value;
 
 
 			const registerRequest = {
+				userId: userId,
 				firstName: firstName,
 				lastName: lastName,
 				emailAddress: emailAddress,
-				password: password,
 				userType: userType,
 				phone: phone,
 				address: address
@@ -179,23 +178,23 @@
 					if (data.status === 201) {
 						// Redirect to the URL specified in the response
 						window.location.href = "http://localhost:9090/user/page/login";
-						alert("Registration successfully completed.");
+						alert("user updated successfully completed.");
 
 
 					} else if (data.status === 400) {
-						alert("Registration failed, Please try again");
+						alert("Bad request. Please try again");
 
 					} else {
 						// Handle the case when the login is unsuccessf
-						alert("Registration failed, Please try again");
+						alert("Operation failed, Please try again");
 					}
 				})
 				.catch(error => {
-					alert("An error occurred while trying to registration in.");
+					alert("An error occurred while trying to Update the user.");
 				});
 		}
 	</script>
 
 </body>
 
-</html>
+</htmlb>

@@ -15,6 +15,10 @@ public interface UserService {
 
 	public UserResponse getUserDetails(String userId);
 
+	public UserResponse getUserDetails(long userId);
+
 	public UserResponse updateUserDetails(UserRequest userRequest);
+
+	public Boolean deleteUserRecord(long userId);
 
 }

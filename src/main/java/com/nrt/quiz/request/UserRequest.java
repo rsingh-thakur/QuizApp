@@ -8,6 +8,7 @@ import lombok.Data;
 @Component
 public class UserRequest {
 
+	private long userId;
 	private String firstName;
 
 	private String lastName;

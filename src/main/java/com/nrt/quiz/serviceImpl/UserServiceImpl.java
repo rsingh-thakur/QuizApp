@@ -1,5 +1,6 @@
 package com.nrt.quiz.serviceImpl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class UserServiceImpl implements UserService {
 				allUserList.add(user);
 			}
 		}
+		log.info("users list is fetched here : " + allUserList.indexOf(0));
 		return allUserList;
 	}
 
@@ -70,11 +72,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponse updateUserDetails(UserRequest userRequest) {
 
-		User existingUser = userRepository.findByEmailAddress(CommonUtil.encrypt(userRequest.getEmailAddress()));
+		User existingUser = userRepository.findById(userRequest.getUserId()).get();
 		log.info("user old " + existingUser.getId());
-		if (existingUser != null) {
 		User encriptedUserRequest = CommonUtil.encriptUserDetails(userRequest);
-
 		existingUser.setAddress(encriptedUserRequest.getAddress());
 		existingUser.setCreationDate(encriptedUserRequest.getCreationDate());
 		existingUser.setEmailAddress(encriptedUserRequest.getEmailAddress());
@@ -87,9 +87,30 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.save(existingUser);
 		log.info("user new " + user.getId());
 		return CommonUtil.decriptUser(user);
-		
+	}
+
+	@Override
+	public UserResponse getUserDetails(long userId) {
+		log.info("user address is : " + userId);
+		User user = userRepository.findById(userId).get();
+		if (user != null) {
+			log.info("user found " + user.getAddress());
+			return CommonUtil.decriptUser(user);
 		}
 		return null;
+
+	}
+
+	// delete the user record
+	@Override
+	public Boolean deleteUserRecord(long userId) {
+		try {
+			userRepository.deleteById(userId);
+			return Boolean.TRUE;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return Boolean.FALSE;
 	}
 
 }

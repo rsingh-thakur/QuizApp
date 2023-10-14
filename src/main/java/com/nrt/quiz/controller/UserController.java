@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +29,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Controller
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:9090")
 public class UserController {
 
 	@Autowired
@@ -45,9 +49,21 @@ public class UserController {
 
 	}
 
-	@GetMapping("/page/updateUser")
-	public ModelAndView getUserUpdatePage(ModelAndView modelAndView) {
+	@GetMapping("/page/usersList")
+	public ModelAndView getUsersListPage(ModelAndView modelAndView) {
+		modelAndView.setViewName("html/logins/usersList");
+		return modelAndView;
+
+	}
+
+	@GetMapping("/page/updateUser/{userId}")
+	public ModelAndView getUserUpdatePage(ModelAndView modelAndView, @PathVariable("userId") long userId) {
+
+		UserResponse currentUserDetails = userService.getUserDetails(userId);
+
+		modelAndView.addObject("user", currentUserDetails);
 		modelAndView.setViewName("html/logins/updateUser");
+
 		return modelAndView;
 	}
 
@@ -106,7 +122,7 @@ public class UserController {
 	}
 
 	// get all users list
-	@GetMapping("/userList")
+	@GetMapping("/usersList")
 	public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
 		List<UserResponse> userResponse = userService.getAllUesrsList();
 		if (userResponse != null) {
@@ -120,19 +136,19 @@ public class UserController {
 		}
 
 	}
-	
-   // update the user details 
+
+	// update the user details
 	@PostMapping("/updateUser")
 	public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest userRequest) {
+		log.info("user request"+userRequest.toString());
 		UserResponse udpatedUser = userService.updateUserDetails(userRequest);
 		if (udpatedUser != null) {
 			return new ResponseEntity<ApiResponse<UserResponse>>(
 					new ApiResponse<UserResponse>("success", "user datails is updated successfully", udpatedUser, 200),
 					HttpStatus.OK);
 		} else {
-			return new ResponseEntity<ApiResponse<UserResponse>>(
-					new ApiResponse<UserResponse>("Failed", "failed to update or user does not eixts", udpatedUser, 404),
-					HttpStatus.NO_CONTENT);
+			return new ResponseEntity<ApiResponse<UserResponse>>(new ApiResponse<UserResponse>("Failed",
+					"failed to update or user does not eixts", udpatedUser, 404), HttpStatus.NO_CONTENT);
 		}
 
 	}
@@ -152,6 +168,22 @@ public class UserController {
 				" user details  failed to fetch~", null, 200);
 
 		return new ResponseEntity<>(apiResponse, null, HttpStatus.NOT_FOUND);
+
+	}
+	
+	
+	@DeleteMapping("/deleteUser/{userId}")
+	public ResponseEntity<ApiResponse<UserResponse>> deleteUser(@PathVariable("userId") long userId){
+		log.info("userId deleteUser invoked .." + userId);
+		Boolean isDeleted =  userService.deleteUserRecord(userId);
+		if (isDeleted) {
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("success", "user is deleted  successfully",null, 200),
+					HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ApiResponse<UserResponse>>(new ApiResponse<UserResponse>("Failed",
+					"failed to delete the user", null, 404), HttpStatus.NO_CONTENT);
+		}
 
 	}
 

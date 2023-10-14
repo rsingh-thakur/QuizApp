@@ -35,7 +35,10 @@ public class CommonUtil {
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			byte[] encryptedData;
 
-			encryptedData = cipher.doFinal(data.getBytes());
+			if (data != null)
+				encryptedData = cipher.doFinal(data.getBytes());
+			else
+				encryptedData = cipher.doFinal();
 			return Base64.getEncoder().encodeToString(encryptedData);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,7 +53,9 @@ public class CommonUtil {
 			Key key = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
 			Cipher cipher = Cipher.getInstance(TRANSFORMATION);
 			cipher.init(Cipher.DECRYPT_MODE, key);
-			byte[] rawData = Base64.getDecoder().decode(encryptedData);
+			byte[] rawData = null;
+			if (encryptedData != null)
+				rawData = Base64.getDecoder().decode(encryptedData);
 			byte[] decryptedData;
 
 			decryptedData = cipher.doFinal(rawData);
@@ -95,28 +100,32 @@ public class CommonUtil {
 	public static UserResponse decriptUser(User user) {
 		UserResponse response = new UserResponse();
 		if (user != null) {
-			response.setFirstName(CommonUtil.decrypt(user.getFirstName()));
-			response.setLastName(CommonUtil.decrypt(user.getLastName()));
-			response.setEmailAddress(CommonUtil.decrypt(user.getEmailAddress()));
-			response.setUserType(CommonUtil.decrypt(user.getUserType()));
-			response.setAddress(CommonUtil.decrypt(user.getAddress()));
-			response.setPhone(CommonUtil.decrypt(user.getPhone()));
-			response.setUserId(user.getId());
-			response.setCreated_At((user.getCreationDate()));
-			if (user.getRole() != null)
-				response.setRole(CommonUtil.decrypt(user.getRole().getName()));
+			try {
+				response.setFirstName(CommonUtil.decrypt(user.getFirstName()));
+				response.setLastName(CommonUtil.decrypt(user.getLastName()));
+				response.setEmailAddress(CommonUtil.decrypt(user.getEmailAddress()));
+				response.setUserType(CommonUtil.decrypt(user.getUserType()));
+				response.setAddress(CommonUtil.decrypt(user.getAddress()));
+				response.setPhone(CommonUtil.decrypt(user.getPhone()));
+				response.setUserId(user.getId());
+				response.setCreated_At((user.getCreationDate()));
+				if (user.getRole() != null)
+					response.setRole(CommonUtil.decrypt(user.getRole().getName()));
+			} catch (Exception e) {
+				log.error("Exception is occoured :" + e.getMessage());
+			}
 		}
+
 		return response;
 	}
 
-	
 	// encript the user details
 	@SuppressWarnings("deprecation")
 	public static User encriptUserDetails(UserRequest userRequest) {
 		User user = new User();
 		if (userRequest != null) {
 			user.setFirstName(CommonUtil.encrypt(userRequest.getFirstName()));
-			user.setLastName(CommonUtil.encrypt(userRequest.getFirstName()));
+			user.setLastName(CommonUtil.encrypt(userRequest.getLastName()));
 			user.setEmailAddress(CommonUtil.encrypt(userRequest.getEmailAddress()));
 			user.setPassword(CommonUtil.encrypt(userRequest.getPassword()));
 			user.setUserType(CommonUtil.encrypt(userRequest.getUserType()));
@@ -126,8 +135,5 @@ public class CommonUtil {
 		}
 		return user;
 	}
-
-	
-	
 
 }

@@ -16,5 +16,4 @@ public class QuizAppApplication {
 		log.info("Quiz app started successfully .......");
 
 	}
-
 }
