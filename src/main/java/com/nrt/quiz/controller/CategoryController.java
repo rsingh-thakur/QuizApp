@@ -7,6 +7,7 @@ import com.nrt.quiz.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/category")
@@ -43,4 +44,11 @@ public class CategoryController {
     public ResponseEntity<ApiResponse<?>> deleteCategory(@PathVariable("categoryId") Long categoryId){
         return this.categoryService.deleteCategory(categoryId);
     }
+    
+    @GetMapping("/page")
+	public ModelAndView getAddCategoryPage(ModelAndView modelAndView) {
+		modelAndView.setViewName("html/CategoryPages/AddCategory");
+		return modelAndView;
+
+	}
 }

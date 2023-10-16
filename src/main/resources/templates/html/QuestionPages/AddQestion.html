@@ -44,7 +44,7 @@
 							<a class="nav-link active" aria-current="page" href="#">Contact</a>
 						</li>
 					</ul>
-					<a class="btn gradient-custom-2 mx-3 text-light" href="/user/page/login">Login</a>
+					<a class="btn gradient-custom-2 mx-3 text-light" href="/user/page/login">Logout</a>
 				</div>
 			</div>
 		</nav>
@@ -66,7 +66,7 @@
 						<form id="formId">
 							<div class="form-outline mb-4">
 								<label class="form-label" for="form2Example11">Enter Content</label>
-								<input type="text" id="email" class="form-control" placeholder="Add Title"
+								<input type="text" id="title" class="form-control" placeholder="Enter Question"
 									name="title" />
 							</div>
 							<div class="form-outline mb-4">
@@ -98,7 +98,7 @@
 
 							<div class="text-center pt-1 pb-5">
 								<button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3 w-100"
-									type="submit">Add Question</button>
+									onclick="addQuestion()" type="submit">Add Question</button>
 							</div>
 						</form>
 
@@ -109,7 +109,57 @@
 		</div>
 	</section>
 
+<script>
 
+		function addQuestion() {
+			const title = document.getElementById('title').value;
+			const lastName = document.getElementById('lastName').value;
+			const emailAddress = document.getElementById('emailAddress').value;
+			const password = document.getElementById('password').value;
+			const userType = document.getElementById('userType').value;
+			const phone = document.getElementById('phone').value;
+			const address = document.getElementById('address').value;
+
+
+			const questionAddRequest = {
+				title: title,
+				lastName: lastName,
+				emailAddress: emailAddress,
+				password: password,
+				userType: userType,
+				phone: phone,
+				address: address
+			};
+
+			const url = "/user/register";
+
+			fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(registerRequest)
+			})
+				.then(data => {
+					if (data.status === 201) {
+						// Redirect to the URL specified in the response
+						window.location.href = "http://localhost:9090/user/page/login";
+						alert("Registration successfully completed.");
+
+
+					} else if (data.status === 400) {
+						alert("Registration failed, Please try again");
+
+					} else {
+						// Handle the case when the login is unsuccessf
+						alert("Registration failed, Please try again");
+					}
+				})
+				.catch(error => {
+					alert("An error occurred while trying to registration in.");
+				});
+		}
+	</script>
 	<!--	add Question page code end here -->
 
 </body>

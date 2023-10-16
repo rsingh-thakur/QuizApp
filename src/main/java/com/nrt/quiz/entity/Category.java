@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
@@ -23,15 +22,6 @@ public class Category {
 
     @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<Quiz> quiz= new LinkedHashSet<>();
+    private Set<Quiz> quiz;
 
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private long cid;
-//    private String title;
-//    private String description;
-//
-//    @OneToMany(mappedBy = "categoryEntity", cascade = CascadeType.ALL)
-//    @JsonIgnore
-//    private Set<QuizEntity> quizEntities= new LinkedHashSet<>();
 }
