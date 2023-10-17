@@ -3,6 +3,9 @@ package com.nrt.quiz.service;
 import com.nrt.quiz.entity.Quiz;
 import com.nrt.quiz.request.SearchPaginationRequest;
 import com.nrt.quiz.response.ApiResponse;
+
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 
 public interface QuizService {
@@ -15,4 +18,5 @@ public interface QuizService {
 
     //    public Set<QuizEntity> getQuizzes();
     public Quiz getQuiz(Long quizID);
+	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzes();
 }

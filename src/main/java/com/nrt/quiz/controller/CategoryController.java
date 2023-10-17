@@ -1,9 +1,11 @@
 package com.nrt.quiz.controller;
 
 import com.nrt.quiz.entity.Category;
-import com.nrt.quiz.request.SearchPaginationRequest;
 import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.service.CategoryService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,10 +30,11 @@ public class CategoryController {
     }
 
     //get all category
-    @PostMapping("/")
+    @GetMapping("/")
 //    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<ApiResponse<Object>> getCategories(@RequestBody SearchPaginationRequest searchParams){
-        return this.categoryService.getCategories(searchParams);
+    public ResponseEntity<ApiResponse<List<Category>>> getCategories(){
+    	//int pno = Integer.parseInt(pageNo);
+        return this.categoryService.getCategories();
     }
 
     // get single category
@@ -48,6 +51,14 @@ public class CategoryController {
     @GetMapping("/page")
 	public ModelAndView getAddCategoryPage(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/CategoryPages/AddCategory");
+		return modelAndView;
+
+	}
+    
+    
+    @GetMapping("/page/getAllCategories")
+	public ModelAndView getAllCategoriesPage(ModelAndView modelAndView) {
+		modelAndView.setViewName("html/CategoryPages/ListCategory");
 		return modelAndView;
 
 	}

@@ -8,12 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchPaginationRequest {
-    private Long id;
-    private Long categoryId;
-    private String name;
-    private String title;
-    private Boolean active;
-    private Integer per_page_record;
-    private Integer page;
+	private Integer page;
 
 }

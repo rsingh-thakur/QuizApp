@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- Add Bootstrap CSS -->
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+	<meta charset="ISO-8859-1">
+	<title>index</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+</head>
+
+<style>
+	* {
+		font-family: "Gill Sans", sans-serif;
+	}
+
+	.navbar a:hover {
+		color: #b44593;
+	}
+
+	nav {
+		height: 60px;
+	}
+
+	.nav-item a:hover {
+		background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+		border-radius: 10px;
+	}
+
+	.gradient-custom-2 {
+		background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+	}
+
+	.card01 .card {
+		box-shadow: #BFC9CA -5px 5px, #D7DBDD -5px 5px, #D0D3D4 -10px 10px
+	}
+
+	.card01 .card:hover {
+		transform: translateY(-7%);
+		transition: .7s;
+	}
+
+	aside {
+		background-color: #333;
+		color: #fff;
+		width: 250px;
+		position: fixed;
+		top: 60px;
+		bottom: 0;
+		overflow-y: auto;
+		transition: width 0.3s;
+	}
+
+	/* Style the main headings */
+	.main-heading {
+		font-size: 18px;
+		padding: 10px;
+		cursor: pointer;
+	}
+
+	.main-heading:hover {
+		background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+		box-shadow: rgb(255, 255, 128) 5px,5px 5px ,5px, 5px;
+		transition: background-color 0.3s;
+		border-radius: 5px;
+	}
+
+	/* Style the sub-menu items */
+	.sub-menu li {
+		padding: 10px 20px;
+		border-bottom: 1px solid #444;
+		transition: background-color 0.3s;
+	}
+
+	/* Highlight menu items on hover */
+	.sub-menu li:hover {
+		background-color: #444;
+	}
+
+	/* Customize collapsed state */
+	.sub-menu.collapse:not(.show) {
+		display: none;
+	}
+
+	/* Responsive design for smaller screens */
+	@media (max-width: 768px) {
+		aside {
+			width: 100%;
+		}
+	}
+
+	.sub-menu li {
+		padding: 10px 20px;
+		border-bottom: 1px solid #444;
+		transition: background-color 0.3s;
+		color: white;
+	}
+
+	/* Style links inside <li> elements to be the default color */
+	.sub-menu li a {
+		color: inherit;
+		text-decoration: none;
+		/* Inherit the parent <li>'s color (white) */
+	}
+
+	/* Highlight the expanded heading */
+	.main-heading.expanded {
+		background: linear-gradient(to right, #ee7724, #d8363a, #dd3675, #b44593);
+	}
+</style>
+
+<body>
+	<!--  navbar code is start here  -->
+	<section>
+		<nav class="navbar navbar-expand-lg fixed-top navbar-dark"
+			style="background-color:#212529; padding: 0; height: 60px;">
+			<div class="container-fluid">
+				<img src="https://png.pngtree.com/png-vector/20220827/ourmid/pngtree-quiz-time-png-image_6125411.png"
+					style="width: 100px; height: auto;">
+				<a class="navbar-brand fs-3" href="#">QuizX</a>
+
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+					data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+					aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
+					<ul class="navbar-nav">
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="/">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="#">About</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link active" aria-current="page" href="#">Contact</a>
+						</li>
+					</ul>
+					<a class="btn gradient-custom-2 mx-3 log01 text-light" id="loginButton"
+						href="/user/page/login">Login</a>
+					<a class="btn gradient-custom-2 mx-3 log01 text-light" id="profileButton"
+						onclick="getProfilePage()">Profile</a>
+					<a class="btn gradient-custom-2 mx-3 log01 text-light" id="logoutButton" href="/user/page/login"
+						style="display: none;">LogOut</a>
+				</div>
+			</div>
+		</nav>
+
+		<aside>
+			<div class="sidebar">
+				<h2 class="main-heading" data-toggle="collapse" data-target="#category-menu">Category Management</h2>
+				<ul id="category-menu" class="sub-menu collapse">
+					<li><a href="http://localhost:9090/category/page">Add New Category</a></li>
+					<li><a href="#">Edit Category</a></li>
+					<li><a href="#">Delete Category</a></li>
+					<li><a href="http://localhost:9090/category/page/getAllCategories">View Categories</a></li>
+				</ul>
+			</div>
+			<hr>
+			<div class="sidebar">
+				<h2 class="main-heading" data-toggle="collapse" data-target="#student-menu">Student Management</h2>
+				<ul id="student-menu" class="sub-menu collapse">
+					<li><a href="#">Add New Student</a></li>
+					<li><a href="#">Edit Student Information</a></li>
+					<li><a href="#">Remove Student</a></li>
+					<li><a href="http://localhost:9090/user/page/usersList">View Student List</a></li>
+				</ul>
+			</div>
+			<hr>
+			<div class "sidebar">
+				<h2 class="main-heading" data-toggle="collapse" data-target="#Quiz-menu">Quiz Management</h2>
+				<ul id="Quiz-menu" class="sub-menu collapse">
+					<li><a href="http://localhost:9090/page/adQuiz">Add New Quiz</a></li>
+					<li><a href="#">Edit Quiz Information</a></li>
+					<li><a href="#">Remove Quiz</a></li>
+					<li><a href="http://localhost:9090/quiz/page">View Quiz List</a></li>
+				</ul>
+			</div>
+			<hr>
+			<div class="sidebar">
+				<h2 class="main-heading" data-toggle="collapse" data-target="#Cousrse-menu">Cousrse Management</h2>
+				<ul id="Cousrse-menu" class="sub-menu collapse">
+					<li><a href="#">Add New Cousrse</a></li>
+					<li><a href="#">Edit Cousrse Information</a></li>
+					<li><a href="#">Remove Cousrse</a></li>
+					<li><a href="#">View Cousrse List</a></li>
+				</ul>
+			</div>
+			<hr>
+			<div class="sidebar">
+				<h2 class="main-heading" data-toggle="collapse" data-target="#Matrix-menu">General Matrix</h2>
+				<ul id="Matrix-menu" class="sub-menu collapse">
+					<li><a href="#">View The Martix</a></li>
+				</ul>
+			</div>
+		</aside>
+	</section>
+
+	<script>
+		// jQuery document ready function
+		$(document).ready(function () {
+			// Handle the main heading click
+			$('.main-heading').click(function () {
+				// Collapse all sub-menus
+				$('.sub-menu').collapse('hide');
+				// Remove 'expanded' class from all main headings
+				$('.main-heading').removeClass('expanded');
+				// Expand the clicked sub-menu
+				$(this).next('.sub-menu').collapse('show');
+				// Add 'expanded' class to the clicked main heading
+				$(this).addClass('expanded');
+			});
+		});
+	</script>
+</body>
+
+</html>

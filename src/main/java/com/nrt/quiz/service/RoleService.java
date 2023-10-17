@@ -2,7 +2,6 @@ package com.nrt.quiz.service;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
 
 import com.nrt.quiz.entity.Role;
 
