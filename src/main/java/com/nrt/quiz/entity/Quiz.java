@@ -36,7 +36,7 @@ public class Quiz {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Category categories;
-
+   
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	private Set<Questions> questions;
 }

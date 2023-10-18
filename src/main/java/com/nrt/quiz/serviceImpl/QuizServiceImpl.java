@@ -1,7 +1,10 @@
 package com.nrt.quiz.serviceImpl;
 
+import com.nrt.quiz.entity.Category;
 import com.nrt.quiz.entity.Quiz;
+import com.nrt.quiz.repository.CategoryRepository;
 import com.nrt.quiz.repository.QuizRepository;
+import com.nrt.quiz.request.QuizRequest;
 import com.nrt.quiz.request.SearchPaginationRequest;
 import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.service.QuizService;
@@ -21,14 +24,30 @@ import java.util.Optional;
 
 @Service
 public class QuizServiceImpl implements QuizService {
+
 	@Autowired
 	QuizRepository quizRepository;
+
+	@Autowired
+	CategoryRepository categoryRepository;
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override
-	public ResponseEntity<ApiResponse<Quiz>> addQuiz(Quiz quiz) {
+	public ResponseEntity<ApiResponse<Quiz>> addQuiz(QuizRequest quizRequest) {
 		try {
+
+			log.info("category id is : "+quizRequest.getCategoryId());
+			Category category = categoryRepository.findById(quizRequest.getCategoryId()).get();
+
+			Quiz quiz = new Quiz();
+			quiz.setTitle(quizRequest.getName());
+			quiz.setCategories(category);
+			quiz.setMaxMarks(quizRequest.getMaxMarks());
+			quiz.setDescription(quizRequest.getDescription());
+			quiz.setActive(Boolean.getBoolean(quizRequest.getActive()));
+			quiz.setNumberOfQuestions(quizRequest.getNumberOfQuestions());
+
 			Quiz payload = this.quizRepository.save(quiz);
 			return ResponseEntity.ok(new ApiResponse<>("success", "Data saved successfully", payload, 200));
 		} catch (Exception e) {

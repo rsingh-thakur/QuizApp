@@ -142,8 +142,8 @@
 								</div>
 								<div class="d-flex my-3">Quiz Active
 									<div class="form-check mx-3">
-										<input class="form-check-input" type="radio" name="checkStatus1" id="checkStatus1"
-											checked value="true">
+										<input class="form-check-input" type="radio" name="checkStatus1"
+											id="checkStatus1" checked value="true">
 										<label class="form-check-label" for="checkStatus1">True</label>
 									</div>
 									<div class="form-check">
@@ -152,12 +152,12 @@
 										<label class="form-check-label" for="checkStatus2">False</label>
 									</div>
 								</div>
+
 								<select class="form-select my-3" aria-label="Default select example" id="category">
 									<option selected>select category Entity</option>
-									<option value="1">id</option>
-									<option value="2">Two</option>
-									<option value="3">Three</option>
 								</select>
+
+
 								<div class="text-center pt-1 pb-5">
 									<button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3 w-100"
 										type="submit" onclick="addQuiz()">Add Quiz</button>
@@ -171,10 +171,50 @@
 		</div>
 	</div>
 
+
+
+
+	<script>
+		function populateCategories() {
+			fetch('http://localhost:9090/category/') // Replace with the actual URL of your Spring Boot endpoint
+				.then(response => {
+					if (!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+					return response.json();
+				})
+				.then(data => {
+					const categorySelect = document.getElementById('category');
+
+					// Clear existing options
+					categorySelect.innerHTML = '';
+
+					// Add options for each category
+					const payload = data.payload;
+
+					for (let i = 0; i < payload.length; i++) {
+						const category = payload[i];
+						console.log(category);
+						const option = document.createElement('option');
+						option.value = category.id;
+						option.text = category.title; // Use the property representing the category name
+						categorySelect.appendChild(option);
+					}
+				})
+				.catch(error => {
+					console.error('Error fetching categories: ', error);
+				});
+		}
+
+		// Call the function to populate categories on page load
+		document.addEventListener('DOMContentLoaded', populateCategories);
+	</script>
+
+
 	<script>
 		// Show the modal when the plus button is clicked
 		document.getElementById("openFormButton").addEventListener("click", function () {
-			$('#myModal').modal('show'); // Using jQuery to show the Bootstrap modal
+			$('#myModal').modal('show'); // Using jQuery to show the Bootstrap moda l
 		});
 	</script>
 
@@ -268,20 +308,35 @@
 			document.getElementById("formContainer").classList.add("hidden");
 		});
 
+
+		let selectedCategoryId = null;
+
+		const categorySelect = document.getElementById('category');
+		categorySelect.addEventListener('change', function () {
+			selectedCategoryId = categorySelect.value;
+			console.log('id is : ', selectedCategoryId);
+
+		});
+
+
 		function addQuiz() {
 
-			const title = document.getElementById("title").value;
+			const name = document.getElementById("title").value;
 			const description = document.getElementById("description").value;
 			const maxMarks = document.getElementById("maxMarks").value;
 			const noq = document.getElementById("noq").value;
 			const checkStatus = document.getElementById("checkStatus1").value;
+		//	const categoryId = selectedCategoryId.value;
+
+			console.log('id is : ', categoryId);
 
 			const quizRequestQuery = {
-				title: title,
+				name: name,
 				description: description,
-				maxMarks:maxMarks,
-				numberOfQuestions:noq,
-				active:checkStatus
+				maxMarks: maxMarks,
+				numberOfQuestions: noq,
+				active: checkStatus,
+				//category: categoryId
 			};
 
 			fetch('http://localhost:9090/quiz', {
@@ -304,7 +359,6 @@
 				});
 		}
 	</script>
-
 
 
 </body>
