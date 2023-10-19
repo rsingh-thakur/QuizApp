@@ -2,6 +2,8 @@ package com.nrt.quiz.entity;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -32,11 +34,12 @@ public class Quiz {
 	private String description;
 	private String maxMarks;
 	private String numberOfQuestions;
-	private boolean active = false;
+	private boolean active;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Category categories;
    
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
+	@JsonIgnore
 	private Set<Questions> questions;
 }

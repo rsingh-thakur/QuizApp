@@ -20,4 +20,5 @@ public interface QuizService {
     //    public Set<QuizEntity> getQuizzes();
     public Quiz getQuiz(Long quizID);
 	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzes();
+	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzesUnderCategory(String categoryId);
 }

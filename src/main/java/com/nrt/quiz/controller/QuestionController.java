@@ -1,6 +1,7 @@
 package com.nrt.quiz.controller;
 
 import com.nrt.quiz.entity.Questions;
+import com.nrt.quiz.request.QuestionRequest;
 import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.service.QuestionService;
 
@@ -19,15 +20,16 @@ public class QuestionController {
 	private QuestionService questionService;
 
 	@PostMapping()
-	public ResponseEntity<ApiResponse<Questions>> addQuestion(@RequestBody Questions questionRequest) {
+	public ResponseEntity<ApiResponse<Questions>> addQuestion(@RequestBody QuestionRequest questionRequest) {
 		// return ResponseEntity.ok(this.QuestionService.addQuestion(QuestionEntity));
+		
 		return this.questionService.addQuestion(questionRequest);
 	}
 
 	// update category
 	@PutMapping("/{questionId}")
 	public ResponseEntity<ApiResponse<Questions>> updateQuestion(@PathVariable("questionId") Long questionId,
-			@RequestBody Questions Question) {
+			@RequestBody QuestionRequest Question) {
 		return this.questionService.updateQuestion(questionId, Question);
 	}
 
@@ -53,6 +55,20 @@ public class QuestionController {
 	public ModelAndView getPageQuestion(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/QuestionPages/ListQuestion");
 		return modelAndView;
+	}
+	
+
+	@GetMapping("/page/{quizId}")
+	public ModelAndView getPageQuestion(ModelAndView modelAndView, @PathVariable("quizId") String quizId) {
+		modelAndView.addObject("quizId",quizId);
+		modelAndView.setViewName("html/QuestionPages/questionPerQuiz");
+		return modelAndView;
+	}
+	
+	
+	@GetMapping("/getAllQuestions/{quizId}")
+	public ResponseEntity<ApiResponse<List<Questions>>> getQuestion(@PathVariable("quizId") String quizId) {
+		return this.questionService.getAllQuestionByQuiz(quizId);
 	}
 
 }

@@ -13,5 +13,5 @@ public class QuizRequest {
 	private String maxMarks;
 	private String numberOfQuestions;
 	private String active;
-	private long categoryId;
+	private String categoryId;
 }

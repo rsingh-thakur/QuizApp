@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<title> Quiz</title>
@@ -76,10 +76,10 @@
 							<th scope="col">Id</th>
 							<th scope="col">Title</th>
 							<th scope="col">Description</th>
-							<th scope="col">Max Marks</th>
-							<th scope="col">Num.of Ques.</th>
+							<th scope="col">maxMarks</th>
+							<th scope="col">numberOfQuestions</th>
 							<th scope="col">active</th>
-							<th scope="col">Action</th>
+							<th scope="col">Operations</th>
 						</tr>
 					</thead>
 					<tbody id="userTableBody">
@@ -150,12 +150,6 @@
 									<label class="form-check-label" for="checkStatus2">False</label>
 								</div>
 							</div>
-
-							<select class="form-select my-3" aria-label="Default select example" id="category" required>
-								<option selected>select category Entity</option>
-							</select>
-
-
 							<div class="text-center pt-1 pb-5">
 								<button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3 w-100"
 									type="submit" onclick="addQuiz()">Add Quiz</button>
@@ -171,35 +165,12 @@
 
 
 
-
-	<script>
-		document.addEventListener('DOMContentLoaded', function () {
-			const tableRows = document.querySelectorAll("rowId");
-
-			tableRows.forEach(row => {
-				row.addEventListener('click', function () {
-					// Extract the URL or data you want to navigate to
-					const url = 'http://localhost:9090/quiz/page'; // Replace with the URL you want to navigate 
-					// Open the new page or navigate to the URL
-					window.location.href = url;
-				});
-			});
-		});
-	</script>
+	<input type="text" id="category_Id" th:value="${categoryId}" name="oid" readonly style="display: none;">
 
 
 	<script>
 		document.getElementById("openFormButton").addEventListener("click", function () {
 			document.getElementById("formContainer").classList.toggle("hidden");
-		});
-
-		let selectedCategoryId = null;
-
-		const categorySelect = document.getElementById("category");
-		categorySelect.addEventListener('change', function () {
-			selectedCategoryId = categorySelect.value;
-			console.log('info:', categorySelect);
-
 		});
 
 
@@ -210,7 +181,7 @@
 			const maxMarks = document.getElementById("maxMarks").value;
 			const noq = document.getElementById("noq").value;
 			const checkStatus = document.getElementById("checkStatus1").value;
-			const categoryId = selectedCategoryId;
+			const categoryId = document.getElementById("category_Id");
 
 			const quizRequestQuery = {
 				name: name,
@@ -218,7 +189,7 @@
 				maxMarks: maxMarks,
 				numberOfQuestions: noq,
 				active: checkStatus,
-				categoryId: categoryId
+				categoryId: categoryId.value
 			};
 
 			fetch("http://localhost:9090/quiz", {
@@ -243,59 +214,16 @@
 		}
 	</script>
 
-	<script>
-		function populateCategories() {
-			fetch('http://localhost:9090/category/')
-				.then(response => {
-					if (!response.ok) {
-						throw new Error('Network response was not ok');
-					}
-					return response.json();
-				})
-				.then(data => {
-					const categorySelect = document.getElementById('category');
-
-					// Clear existing options
-					categorySelect.innerHTML = '';
-
-					// Add a default option
-					const defaultOption = document.createElement('option');
-					defaultOption.value = '';
-					defaultOption.text = 'Select a category';
-					categorySelect.appendChild(defaultOption);
-
-
-					// Add options for each category
-					const payload = data.payload;
-
-					for (let i = 0; i < payload.length; i++) {
-						const category = payload[i];
-						console.log(category);
-						const option = document.createElement('option');
-						option.value = category.id;
-						option.text = category.title;
-						categorySelect.appendChild(option);
-					}
-				})
-				.catch(error => {
-					console.error('Error fetching categories: ', error);
-				});
-		}
-
-		// Call the function to populate categories on page load
-		document.addEventListener('DOMContentLoaded', populateCategories);
-	</script>
-
-
-
 	<!--	List Quiz page code end here -->
 
 	<script>
-		const deleteButton = document.getElementById("deleteButton");
+
 
 		function getQuizList() {
 
-			const apiUrl = "http://localhost:9090/quiz/";
+			const category_Id = document.getElementById("category_Id").value;
+
+			const apiUrl = `http://localhost:9090/quiz/getAllQuizzes/${category_Id}`;
 
 			fetch(apiUrl, {
 				method: 'GET',
@@ -322,8 +250,8 @@
                                   <td>
 								     <a href="http://localhost:9090/quiz/page/updateQuiz/${quiz.id}"><i title="Edit Quiz" class="fa-solid fa-pen-to-square mx-2"></i></a>
 								     <button onclick="deleteQuiz(${quiz.id})" style="border:none"> <i title="Delete Quiz" class="fa-solid fa-trash mx-2 text-danger"></i></button>
-								    <a href="http://localhost:9090/question/page/${quiz.id}" style="border:none"><i title="View Questions" class="fas fa-eye"></i>   </a>
-							       </td>
+								     <a href="http://localhost:9090/question/page/${quiz.id}" style="border:none"><i title="View Questions" class="fas fa-eye"></i>   </a>
+							      </td>
                                 `;
 							userTableBody.appendChild(row);
 						}
@@ -336,6 +264,8 @@
 					alert("Error fetching data");
 				});
 		} window.addEventListener('load', getQuizList())
+
+
 
 
 
@@ -365,12 +295,17 @@
 		}
 	</script>
 
+
+
+
 	<script>
 		// Show the modal when the plus button is clicked
 		document.getElementById("openFormButton").addEventListener("click", function () {
 			$('#myModal').modal('show'); // Using jQuery to show the Bootstrap modal
 		});
 	</script>
+
+
 
 	<script>
 
@@ -388,8 +323,9 @@
 
 					}
 					else {
-						alert("No Questions found for quiz");
 						getQuizList();
+						alert("No Questions found for quiz");
+						
 					}
 				})
 				.catch(error => {

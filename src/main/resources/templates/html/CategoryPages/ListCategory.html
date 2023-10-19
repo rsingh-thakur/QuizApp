@@ -67,7 +67,7 @@
 				</div>
 			</div>
 		</div>
-		<div class=" justify-content-center align-items-center"  id="mainContent">
+		<div class=" justify-content-center align-items-center" id="mainContent">
 
 			<div class=" align-items-center" style="margin:15px">
 
@@ -177,7 +177,8 @@
                                     <td>${category.description}</td>
                                   <td>
 								     <a href="http://localhost:9090/user/page/updateUser/${category.id}"><i class="fa-solid fa-pen-to-square mx-2"></i></a>
-								     <button onclick="deleteCategoty(${category.id})"> <i class="fa-solid fa-trash mx-2 text-danger"></i></button>
+								     <button onclick="deleteCategoty(${category.id})" style="border:none"> <i class="fa-solid fa-trash mx-2 text-danger"></i></button>
+							         <a href="http://localhost:9090/quiz/page/${category.id}"><i title="View Quizes" class="fas fa-eye"></i>   </a>
 							      </td>
                                 `;
 							userTableBody.appendChild(row);
@@ -218,6 +219,19 @@
 					alert("Error fetching data");
 				});
 		}
+
+
+		function getQuizzes(categoryId) {
+
+			const newURL = `quiz.html?quizId=${categoryId}`;
+			window.location.href = newURL;
+		}
+
+
+
+
+
+
 	</script>
 
 

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Questions</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+
+	<!-- font awesome link for icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+		integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+	<script src="https://code.jquery.com/jquery-3.3.1.js"
+		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
+		</script>
+
+
+	<style>
+		#mainContent,
+		#heading {
+			background-color: rgb(255, 255, 255);
+			border: 1px solid rgb(192, 192, 192);
+			box-shadow: 5px 5px 5px 3px rgb(128, 128, 128);
+			padding-top: 15px;
+			margin: 10px;
+			border-radius: 5px;
+		}
+
+		#heading {
+			padding: 5px;
+		}
+
+		.hidden {
+			display: none;
+		}
+	</style>
+
+
+
+	<script>
+		$(function () {
+			$("#header").load("/getCommonHeader");
+			$("#sidebar").load("/getCommonSidebar");
+		});
+	</script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body style="background-color: rgb(198, 198, 198)">
+
+	<div id="header"></div>
+	<div id="sidebar"></div>
+
+	<div style="margin-left:260px; margin-top: 70px;">
+		<div class="row">
+			<div class="col-12">
+				<h5 class="justify-content-center align-center" id="heading">Questions</h5>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-12 d-flex justify-content-end">
+				<div
+					style="background-color: rgb(255, 255, 255);  box-shadow: 5px 5px 5px 4px rgb(150, 150, 150); margin-right: 10px; border-radius: 5px; ">
+					<button id="openFormButton" class="btn btn-outline-primary ">
+						<div> <i class="fas fa-plus"></i> </div>
+
+					</button>
+					<button class="btn btn-outline-primary" onclick="getUsersList()">
+						<i class="fas fa-sync"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<div class=" justify-content-center align-items-center" id="mainContent">
+
+			<div class=" align-items-center" style="margin:15px">
+				<div class="justify-content-center align-items-center">
+
+					<table class="table table-striped table-bordered shadow-lg">
+						<thead>
+							<tr>
+								<th scope="col">S.N.</th>
+								<th scope="col">Question</th>
+								<th scope="col">Option-A </th>
+								<th scope="col">Option-B </th>
+								<th scope="col">Option-C </th>
+								<th scope="col">Option-D </th>
+								<th scope="col">Answer</th>
+								<th scope="col">Operations</th>
+
+							</tr>
+						</thead>
+						<tbody id="userTableBody">
+
+						</tbody>
+					</table>
+
+					<nav class="float-end my-3" aria-label="Page navigation example">
+						<ul class="pagination">
+							<li class="page-item"><a class="page-link" href="#"><i
+										class="fa-solid fa-chevron-left"></i></a>
+							</li>
+							<li class="page-item"><a class="page-link" href="#">1</a></li>
+							<li class="page-item"><a class="page-link" href="#">2</a></li>
+							<li class="page-item"><a class="page-link" href="#">3</a></li>
+							<li class="page-item"><a class="page-link" href="#"><i
+										class="fa-solid fa-chevron-right"></i></a>
+							</li>
+						</ul>
+					</nav>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal" tabindex="-1" role="dialog" id="myModal">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Add New Question</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<!-- Your form goes here -->
+					<div class="card-body p-md-0 mx-md-5">
+						<form id="formId">
+							<div class="form-outline mb-4">
+								<label class="form-label" for="question">Enter Question </label>
+								<input type="text" id="question" class="form-control"
+									placeholder="Enter Question with ? mark" name="question" />
+							</div>
+							<div class="form-outline mb-4">
+								<label class="form-label" for="op1">Option 1 </label>
+								<input type="text" id="op1" class="form-control" placeholder="Enter option A"
+									name="op1" />
+							</div>
+							<div class="form-outline mb-4">
+								<label class="form-label" for="op2">Option 2 </label>
+								<input type="text" id="op2" class="form-control" placeholder="Enter option B"
+									name="op2" />
+							</div>
+							<div class="form-outline mb-4">
+								<label class="form-label" for="op3">Option 3 </label>
+								<input type="text" id="op3" class="form-control" placeholder="Enter option C"
+									name="op3" />
+							</div>
+							<div class="form-outline mb-4">
+								<label class="form-label" for="op4">Option 4 </label>
+								<input type="text" id="op4" class="form-control" placeholder=" Enter option D"
+									name="op4" />
+							</div>
+							<div class="form-outline mb-4">
+								<label class="form-label" for="answer">Answer </label>
+								<input type="text" id="answer" class="form-control" placeholder="Enter correct answer"
+									name="ans" />
+							</div>
+
+							<div class="text-center pt-1 pb-5">
+								<button class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3 w-100"
+									onclick="addQuestion()" type="submit">Add Question</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// Show the modal when the plus button is clicked
+		document.getElementById("openFormButton").addEventListener("click", function () {
+			$('#myModal').modal('show'); // Using jQuery to show the Bootstrap modal
+		});
+	</script>
+
+
+
+	<input type="text" id="quiz_Id" th:value="${quizId}" name="oid" readonly style="display: none;">
+
+
+
+
+	<script>
+		const deleteButton = document.getElementById("deleteButton");
+
+		function getQuestionList() {
+
+			const quiz_Id = document.getElementById("quiz_Id").value;
+
+			const apiUrl = `http://localhost:9090/question/getAllQuestions/${quiz_Id}`;
+
+			fetch(apiUrl, {
+				method: 'GET',
+			})
+				.then(response => response.json())
+				.then(data => {
+
+					const userTableBody = document.getElementById('userTableBody');
+					userTableBody.innerHTML = '';  // Clear existing rows
+
+					if (data && data.payload && Array.isArray(data.payload)) {
+						const payload = data.payload;
+
+						for (let i = 0; i < payload.length; i++) {
+							const Question = payload[i];
+							const row = document.createElement('tr');
+							row.innerHTML = `
+                                    <th scope="row">${Question.id}</th>
+                                    <td style="color:red">${Question.question}</td>
+                                    <td>${Question.optionA}</td>
+                                    <td>${Question.optionB}</td>
+                                    <td>${Question.optionC}</td>
+                                    <td>${Question.optionD}</td>
+                                    <td style="color:green">${Question.answer}</td>
+                                    
+                                       
+                                  <td>
+								     <a href="http://localhost:9090/question/page/updateQuestion/${Question.id}"><i class="fa-solid fa-pen-to-square mx-2"></i></a>
+								     <button onclick="deleteQuestion(${Question.id})" style="border:none"> <i class="fa-solid fa-trash mx-2 text-danger"></i></button>
+							      </td>
+                                `;
+							userTableBody.appendChild(row);
+						}
+					} else {
+						alert("No data found or data format is incorrect");
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert("Error fetching data");
+				});
+		} window.addEventListener('load', getQuestionList())
+
+
+
+		function deleteQuestion(questionId) {
+			console.log(questionId);
+			const apiUrl = `http://localhost:9090/question/${questionId}`;
+			fetch(apiUrl, {
+				method: 'DELETE',
+			})
+				.then(response => response.json())
+				.then(data => {
+					console.log(data);
+					if (data.statusCode === 200) {
+						alert("Question is deleted successfully ")
+						getQuestionList();
+
+					}
+					else {
+						alert("No data found for Question");
+						getQuestionList();
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert("Error fetching data");
+				});
+		}
+	</script>
+
+
+
+
+
+	<script>
+		function addQuestion() {
+
+			const question = document.getElementById("question").value;
+			const optionA = document.getElementById("op1").value;
+			const optionB = document.getElementById("op2").value;
+			const optionC = document.getElementById("op3").value;
+			const optionD = document.getElementById("op4").value;
+			const answer = document.getElementById("answer").value;
+			const quizId = document.getElementById("quiz_Id").value;
+
+
+			const QuestionData = {
+				question: question,
+				optionA: optionA,
+				optionB: optionB,
+				optionC: optionC,
+				optionD: optionD,
+				answer: answer,
+				quizId: quizId
+
+			};
+
+			fetch('http://localhost:9090/question', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(QuestionData)
+			})
+				.then(response => {
+					if (response.ok) {
+						alert(' Question is added sucessfully');
+					} else {
+						alert('Failed to add Question');
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+		}
+	</script>
+
+</body>
+
+</html>

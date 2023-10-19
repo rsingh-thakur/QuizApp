@@ -1,6 +1,7 @@
 package com.nrt.quiz.serviceImpl;
 
 import com.nrt.quiz.entity.Category;
+import com.nrt.quiz.entity.Questions;
 import com.nrt.quiz.entity.Quiz;
 import com.nrt.quiz.repository.CategoryRepository;
 import com.nrt.quiz.repository.QuizRepository;
@@ -37,8 +38,9 @@ public class QuizServiceImpl implements QuizService {
 	public ResponseEntity<ApiResponse<Quiz>> addQuiz(QuizRequest quizRequest) {
 		try {
 
-			log.info("category id is : "+quizRequest.getCategoryId());
-			Category category = categoryRepository.findById(quizRequest.getCategoryId()).get();
+			log.info("category id is : " + quizRequest.getCategoryId());
+			long cateId = Long.parseLong(quizRequest.getCategoryId());
+			Category category = categoryRepository.findById(cateId).get();
 
 			Quiz quiz = new Quiz();
 			quiz.setTitle(quizRequest.getName());
@@ -92,19 +94,13 @@ public class QuizServiceImpl implements QuizService {
 	public ResponseEntity<ApiResponse<Object>> getQuizzes(SearchPaginationRequest searchParams) {
 
 		try {
-
 			// Set the default value of page to 1
 			Integer page = (searchParams.getPage() != null) ? searchParams.getPage() : 1;
-
 			Page<Quiz> quizPage;
-
 			// If we are using filter of AND/OR condition than start in beginning using "if"
 			// condition
-
 			quizPage = quizRepository.findAll(PageRequest.of(page - 1, 10, Sort.by(Sort.Order.desc("id"))));
-
 			List<Quiz> quizzes = quizPage.getContent();
-
 			Map<String, Object> map = Map.of("data", quizzes, "totalElements", quizPage.getTotalElements(),
 					"currentPage", page, "perPageRecord", 10, "totalPages", quizPage.getTotalPages());
 			return ResponseEntity.ok(new ApiResponse<>("success", "Data retrieved successfully", map, 200));
@@ -165,6 +161,33 @@ public class QuizServiceImpl implements QuizService {
 						.body(new ApiResponse<>("Failed", "quiz dats not found", null, 404));
 			}
 		} catch (Exception e) {
+			// Handle the exception here and log it
+			log.error("An error occurred while deleting data", e);
+			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
+		}
+
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzesUnderCategory(String categoryId) {
+		try {
+			log.info("for one category "+categoryId);
+			
+			long categoryID = Long.parseLong(categoryId);
+			Category categoty = categoryRepository.findById(categoryID).get();
+
+			List<Quiz> categotysList = quizRepository.findAllByCategories(categoty);
+      
+			if (!categotysList.isEmpty())
+				return ResponseEntity
+						.ok(new ApiResponse<>("success", "Quizzes data fetched successfully", categotysList, 200));
+			else {
+				log.info("not questions data found for this quiz id ");
+				 return new ResponseEntity<>(new ApiResponse<>("failed", "Quizzes not found", null, 404), HttpStatus.NOT_FOUND);
+		    }
+		} catch (
+
+		Exception e) {
 			// Handle the exception here and log it
 			log.error("An error occurred while deleting data", e);
 			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));

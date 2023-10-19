@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .quiz-container {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .question {
+            font-weight: bold;
+        }
+        .answers {
+            margin: 10px 0;
+        }
+        .answer {
+            margin: 5px;
+            cursor: pointer;
+        }
+        .result {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="question">Question 1: What is 2 + 2?</div>
+        <div class="answers">
+            <div class="answer" onclick="checkAnswer(this, 1)">A) 3</div>
+            <div class="answer" onclick="checkAnswer(this, 1)">B) 4</div>
+            <div class="answer" onclick="checkAnswer(this, 1)">C) 5</div>
+        </div>
+        <div class="result" id="result-1"></div>
+    </div>
+
+    <div class="quiz-container">
+        <div class="question">Question 2: What is the capital of France?</div>
+        <div class="answers">
+            <div class="answer" onclick="checkAnswer(this, 2)">A) London</div>
+            <div class="answer" onclick="checkAnswer(this, 2)">B) Paris</div>
+            <div class="answer" onclick="checkAnswer(this, 2)">C) Berlin</div>
+        </div>
+        <div class="result" id="result-2"></div>
+    </div>
+
+    <!-- Add more quiz containers for additional questions -->
+    
+    <script>
+        let scores = {}; // Store scores for each question
+
+        function checkAnswer(selectedAnswer, questionNumber) {
+            const correctAnswer = questionNumber === 1 ? "B" : "B"; // Define correct answers
+
+            if (selectedAnswer.textContent.includes(correctAnswer)) {
+                selectedAnswer.style.backgroundColor = "#4CAF50"; // Green for correct answer
+                scores[questionNumber] = 1; // Score 1 for correct answer
+            } else {
+                selectedAnswer.style.backgroundColor = "#f44336"; // Red for wrong answer
+                scores[questionNumber] = 0; // Score 0 for wrong answer
+            }
+
+            // Display the result
+            const resultElement = document.getElementById(`result-${questionNumber}`);
+            resultElement.textContent = `Your Score: ${scores[questionNumber]}/1`;
+
+            // Disable further selection for this question
+            const answerElements = document.querySelectorAll(`.quiz-container:nth-child(${questionNumber}) .answer`);
+            answerElements.forEach((answer) => {
+                answer.style.pointerEvents = "none";
+            });
+        }
+    </script>
+</body>
+</html>
