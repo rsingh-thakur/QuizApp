@@ -24,6 +24,7 @@ import com.nrt.quiz.response.LoginResponse;
 import com.nrt.quiz.response.UserResponse;
 import com.nrt.quiz.service.UserService;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -104,9 +105,12 @@ public class UserController {
 	// get user login
 	@SuppressWarnings("deprecation")
 	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest, HttpSession session) {
 		log.info("login controller invoked ..");
 
+		 session.setAttribute("email", loginRequest.getEmail());
+	        session.setAttribute("password", loginRequest.getPassword());
+		
 		Boolean isLoggedIn = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
 		if (isLoggedIn) {
 			LoginResponse loginResponse = new LoginResponse("jwtToken will be passed",

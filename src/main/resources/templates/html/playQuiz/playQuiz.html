@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Questions</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+		crossorigin="anonymous"></script>
+
+	<!-- font awesome link for icons -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+		integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+		crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+	<script src="https://code.jquery.com/jquery-3.3.1.js"
+		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
+		</script>
+
+
+	<style>
+		#mainContent,
+		#heading {
+			background-color: rgb(255, 255, 255);
+			border: 1px solid rgb(128, 128, 128);
+			box-shadow: 5px 5px 5px 3px rgb(128, 128, 128);
+			padding-top: 15px;
+			margin: 10px;
+			border-radius: 5px;
+		}
+
+		#heading {
+			padding: 10px;
+		}
+
+
+		.quiz-container {
+			padding: 20px;
+			text-align: center;
+			margin-top: 10px;
+		}
+
+		#question {
+			color: #1652f0;
+			/* Dark blue color for questions */
+		}
+
+		#options div {
+			margin-bottom: 5px;
+			transition: background-color 0.3s;
+			padding: 5px;
+			border-radius: 5px;
+			cursor: pointer;
+			text-align: left;
+			box-shadow: 3px 3px 3px 2px rgb(192, 192, 192);
+			border: 1px solid grey;
+		}
+
+		#options div:hover {
+			background-color: #1652f0;
+			color: white;
+		}
+
+		#timer {
+			font-weight: bold;
+			color: rgb(200, 0, 0);
+		}
+
+		#question-count {
+			font-weight: bold;
+			color: rgb(0, 0, 255);
+		}
+
+		#timerDiv {
+			background-color: rgb(255, 255, 255);
+			border-radius: 35px;
+			padding: 5px;
+			margin: 5px;
+			text-align: center;
+			box-shadow: 5px 5px 5px 3px rgb(128, 128, 128);
+		}
+
+		.btn-danger,
+		.btn-primary {
+			margin-top: 5px;
+		}
+	</style>
+
+	<script>
+		$(function () {
+			$("#header").load("/getCommonHeader");
+		});
+	</script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+
+<body style="background-color: rgb(198, 198, 198)">
+
+	<div id="header"></div>
+
+	<div style="margin-top: 70px;">
+		<div class="row  justify-content-center ">
+			<div class="col-10">
+				<h5 align="center" id="heading"> Quiz Name </h5>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="row  justify-content-end" style="margin-right:17%">
+		<div class="col-1" id="timerDiv">
+			<div id="timer" class="mb-0"><span id="time" class="font-weight-bold">60</span></div>
+		</div>
+		<div class="col-1" id="timerDiv">
+			<div id="question-count" class="mb-0">Q. <span id="current-question">1</span> of <span
+					id="total-questions">1</span>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="container mt-3">
+		<div class="row justify-content-center">
+			<div class="col-11 d-flex justify-content-center"
+				style="background-color:white; border-radius:5px;box-shadow: 5px 5px 5px 3px rgb(128, 128, 128);">
+				<div class="quiz-container">
+					<div id="question" class="mb-4 h4"></div>
+					<div id="options" class="mb-4"></div>
+					<button class="btn btn-primary" id="next-btn">Next</button>
+					<div class="row  justify-content-center">
+						<div class="col-4">
+							<button class="btn btn-success" id="submit-btn" onclick="handleAutoSubmit()"
+								style="display: none;">Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row  justify-content-center " style="margin:5px;padding:0">
+			<div class="col-11">
+				<div id="progress-bar" class="mb-1">
+					<div id="progress" class="progress">
+						<div id="progress-indicator" class="progress-bar" role="progressbar" style="width: 0%;"
+							aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<input type="text" id="quiz_Id" th:value="${quizId}" name="oid" readonly style="display: none;">
+
+	</div>
+
+
+	<script>
+
+		let correctAnswerCount = 0;
+
+		let attemptedQuestions = 0;
+
+		const quiz_Id = document.getElementById("quiz_Id").value;
+
+		const apiUrl = `http://localhost:9090/question/getAllQuestions/${quiz_Id}`;
+
+		fetch(apiUrl)
+			.then((response) => response.json())
+			.then((data) => {
+				if (data.status === "success") {
+					const quizData = data.payload;
+					initializeQuiz(quizData);
+				} else {
+					console.error("Failed to fetch quiz data.");
+				}
+			})
+			.catch((error) => console.error(error));
+
+		function initializeQuiz(quizData) {
+			let currentQuestion = 0;
+			let timeLeft = 50000; // 50 seconds timer
+
+
+
+			const questionElement = document.getElementById("question");
+			const optionsElement = document.getElementById("options");
+			const timerElement = document.getElementById("time");
+			//const prevButton = document.getElementById("prev-btn");
+			const nextButton = document.getElementById("next-btn");
+			const submitButton = document.getElementById("submit-btn");
+			const currentQuestionElement = document.getElementById("current-question");
+			const totalQuestionsElement = document.getElementById("total-questions");
+
+			const totalQuestions = quizData.length;
+			totalQuestionsElement.textContent = totalQuestions;
+
+			function displayQuestion(questionIndex) {
+				const question = quizData[questionIndex];
+				questionElement.textContent = question.question;
+				currentQuestionElement.textContent = questionIndex + 1;
+
+				optionsElement.innerHTML = "";
+				const options = ["optionA", "optionB", "optionC", "optionD"];
+				options.forEach((optionKey, index) => {
+					if (question[optionKey]) {
+						const optionElement = document.createElement("div");
+						optionElement.textContent = question[optionKey];
+						optionElement.addEventListener("click", () => checkAnswer(index));
+						optionsElement.appendChild(optionElement);
+					}
+				});
+
+				if (questionIndex === totalQuestions - 1) {
+					submitButton.style.display = "block";
+					nextButton.style.display = "none";
+				} else {
+					submitButton.style.display = "none";
+				}
+			}
+
+
+
+
+			// checks the answer is wrong or correct 
+			function checkAnswer(selectedOption) {
+				const correctAnswer = quizData[currentQuestion].answer;
+				const selectedOptionText = quizData[currentQuestion][`option${String.fromCharCode(65 + selectedOption)}`];
+
+				if (selectedOptionText === correctAnswer) {
+					correctAnswerCount++;
+				} else {
+					// Handle wrong answer
+				}
+
+				currentQuestion++;
+				if (currentQuestion < quizData.length) {
+					displayQuestion(currentQuestion);
+				} else {
+					// Quiz is finished
+				}
+
+				attemptedQuestions++;
+
+			}
+
+
+			function updateTimer() {
+				const minutes = Math.floor(timeLeft / 60000);
+				const seconds = Math.floor((timeLeft % 60000) / 1000);
+				timerElement.textContent = `Time: ${minutes}:m ${seconds}: s`;
+
+				if (timeLeft > 0) {
+					timeLeft -= 1000;
+					setTimeout(updateTimer, 1000);
+				} else {
+					alert("Time is Over !!!");
+					handleAutoSubmit(); // Automatically submit the quiz when the timer runs out
+				}
+			}
+
+			//prevButton.addEventListener("click", () => {
+			//	if (currentQuestion > 0) {
+			//		currentQuestion--;
+			//			displayQuestion(currentQuestion);
+			//	}
+			//	});
+
+			nextButton.addEventListener("click", () => {
+				if (currentQuestion < quizData.length - 1) {
+					currentQuestion++;
+					displayQuestion(currentQuestion);
+				}
+			});
+
+			displayQuestion(currentQuestion);
+			updateTimer();
+		}
+
+
+		// sumits the quiz form data 
+		function handleAutoSubmit() {
+
+			const correctAnswers = correctAnswerCount;
+			const attemptQuiz = document.getElementById("quiz_Id").value;
+			const attemptQuestions = attemptedQuestions;
+
+
+			// Define the data to be sent in the JSON request
+			const requestData = {
+				correctAnswers: correctAnswers, // An array of correct answers
+				attemptQuestions: attemptQuestions, // ID of the quiz attempt
+				attemptQuiz: attemptQuiz,
+			};
+
+			// Make a POST request to your API endpoint
+			fetch("http://localhost:9090/play", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(requestData),
+			})
+				.then((response) => {
+					if (response.status === 200) {
+						// API request was successful
+						console.log("Quiz results submitted successfully.");
+                        window.location.href = 'http://localhost:9090/play/result/';
+						alert("quiz sumitted successfully" + correctAnswerCount);
+
+
+					} else {
+						console.error("Failed to submit quiz results.");
+					}
+				})
+				.catch((error) => {
+					console.error("Error while submitting quiz results: " + error);
+				});
+		}
+
+	</script>
+</body>
+
+</html>
