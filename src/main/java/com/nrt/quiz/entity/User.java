@@ -8,12 +8,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Data
@@ -54,12 +55,15 @@ public class User {
 	@JoinColumn(name = "role_id")
 	private Role role;
 
-	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "account_creation_date")
-	private Date CreationDate;
-	
-	
+	private LocalDate CreationDate;
+
 	@OneToMany(mappedBy = "user")
 	private Set<UserPlayedQuizHistory> quizzes;
+
+	@PrePersist
+	protected void onCreate() {
+		CreationDate = LocalDate.now();
+	}
 
 }

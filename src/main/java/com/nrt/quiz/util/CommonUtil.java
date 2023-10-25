@@ -3,7 +3,6 @@ package com.nrt.quiz.util;
 import java.io.File;
 import java.io.IOException;
 import java.security.Key;
-import java.sql.Date;
 import java.util.Base64;
 
 import javax.crypto.Cipher;
@@ -120,7 +119,6 @@ public class CommonUtil {
 	}
 
 	// encript the user details
-	@SuppressWarnings("deprecation")
 	public static User encriptUserDetails(UserRequest userRequest) {
 		User user = new User();
 		if (userRequest != null) {
@@ -129,7 +127,6 @@ public class CommonUtil {
 			user.setEmailAddress(CommonUtil.encrypt(userRequest.getEmailAddress()));
 			user.setPassword(CommonUtil.encrypt(userRequest.getPassword()));
 			user.setUserType(CommonUtil.encrypt(userRequest.getUserType()));
-			user.setCreationDate(new Date(new java.util.Date().getDate()));
 			user.setAddress(CommonUtil.encrypt(userRequest.getAddress()));
 			user.setPhone(CommonUtil.encrypt(userRequest.getPhone()));
 		}

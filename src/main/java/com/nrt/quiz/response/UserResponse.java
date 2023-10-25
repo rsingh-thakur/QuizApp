@@ -1,6 +1,6 @@
 package com.nrt.quiz.response;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ public class UserResponse {
 
 	private String userType;
 
-	private Date created_At;
+	private LocalDate created_At;
 	
 	private String Address;
 	
