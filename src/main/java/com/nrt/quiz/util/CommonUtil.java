@@ -62,7 +62,7 @@ public class CommonUtil {
 			return new String(decryptedData);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn("exception occoured "+e.getMessage());
 		}
 		return encryptedData;
 

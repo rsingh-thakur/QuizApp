@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.nrt.quiz.request.LoginRequest;
@@ -44,7 +43,8 @@ public class UserController {
 
 	// for user profile page
 	@GetMapping("/page/login")
-	public ModelAndView getLoginPage(ModelAndView modelAndView) {
+	public ModelAndView getLoginPage(ModelAndView modelAndView, HttpSession session) {
+		session.removeAttribute("email");
 		modelAndView.setViewName("html/logins/login");
 		return modelAndView;
 
@@ -58,9 +58,12 @@ public class UserController {
 	}
 
 	@GetMapping("/page/updateUser/{userId}")
-	public ModelAndView getUserUpdatePage(ModelAndView modelAndView, @PathVariable("userId") long userId) {
+	public ModelAndView getUserUpdatePage(ModelAndView modelAndView, @PathVariable("userId") String userId) {
 
-		UserResponse currentUserDetails = userService.getUserDetails(userId);
+		log.info(userId);
+		long userID = Long.parseLong(userId);
+		
+		UserResponse currentUserDetails = userService.getUserDetails(userID);
 
 		modelAndView.addObject("user", currentUserDetails);
 		modelAndView.setViewName("html/logins/updateUser");
@@ -107,7 +110,7 @@ public class UserController {
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest, HttpSession session) {
 		log.info("login controller invoked ..");
-
+		session.setMaxInactiveInterval(20000);
 		 session.setAttribute("email", loginRequest.getEmail());
 	        session.setAttribute("password", loginRequest.getPassword());
 		
@@ -159,7 +162,11 @@ public class UserController {
 
 	// get single user details
 	@GetMapping("/user")
-	public ResponseEntity<ApiResponse<UserResponse>> getUser(@RequestParam("userId") String userId) {
+	public ResponseEntity<ApiResponse<UserResponse>> getUser(HttpSession session) {
+		
+		String userId = (String) session.getAttribute("email");
+		
+		
 		log.info("getUser controller invoked .." + userId);
 		UserResponse userResponse = userService.getUserDetails(userId);
 

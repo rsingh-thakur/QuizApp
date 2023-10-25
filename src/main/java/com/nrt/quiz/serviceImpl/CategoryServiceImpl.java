@@ -62,6 +62,7 @@ public class CategoryServiceImpl implements CategoryService {
 		}
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public ResponseEntity<ApiResponse<Object>> getCategories(int pageNo) {
 

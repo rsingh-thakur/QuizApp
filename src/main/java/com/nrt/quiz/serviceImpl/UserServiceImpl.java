@@ -37,6 +37,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	// gets the all users list
+	@SuppressWarnings("unlikely-arg-type")
 	@Override
 	public List<UserResponse> getAllUesrsList() {
 

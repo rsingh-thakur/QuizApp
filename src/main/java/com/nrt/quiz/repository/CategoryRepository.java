@@ -1,12 +1,10 @@
 package com.nrt.quiz.repository;
 
-import com.nrt.quiz.entity.Category;
-
 import java.util.List;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.nrt.quiz.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category,Long> {
     // in below function we have used "containing" in end so this will run "like" query while matching character/alphabets

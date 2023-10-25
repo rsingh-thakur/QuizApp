@@ -1,7 +1,6 @@
 package com.nrt.quiz.serviceImpl;
 
 import com.nrt.quiz.entity.Category;
-import com.nrt.quiz.entity.Questions;
 import com.nrt.quiz.entity.Quiz;
 import com.nrt.quiz.repository.CategoryRepository;
 import com.nrt.quiz.repository.QuizRepository;

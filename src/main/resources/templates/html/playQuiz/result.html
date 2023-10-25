@@ -57,11 +57,9 @@
 		}
 
 		/* Style the result and user details containers */
-		#result{
+		#result {
 			background-color: rgb(128, 255, 255);
 			padding: 20px;
-			margin: 30px;
-			margin-right:30px;
 			border: 1px solid #ddd;
 			border-radius: 5px;
 		}
@@ -145,65 +143,103 @@
 
 
 
-	<div id="mainContent" class="row">
-       
+	<div id="mainContent" class="row justify-content-center" style="margin:10px; padding: 15px;">
+
 		<div class="row">
 			<!-- First Row -->
 			<div class="col-4">
-				<label for="firstName">First Name:</label>
-				<div type="text" th:text="${user.firstName}" id="firstName" />
+				<label for="firstName"><strong>First Name:</strong></label>
+				<span type="text" th:text="${user.firstName}" id="firstName" />
 			</div>
 
 			<div class="col-4">
-				<label for="lastName">Last Name:</label>
-				<div type="text" th:text="${user.lastName}" id="lastName" />
+				<label for="lastName"><strong>Last Names:</strong></label>
+				<span type="text" th:text="${user.lastName}" id="lastName" />
 			</div>
 
 			<div class="col-4">
-				<label for="emailAddress">Email Address:</label>
-				<div type="text" th:text="${user.emailAddress}" id="emailAddress" />
+				<label for="emailAddress"><strong>Email Address:</strong></label>
+				<span type="text" th:text="${user.emailAddress}" id="emailAddress" />
 			</div>
 		</div>
 
 		<div class="row">
 			<!-- Second Row -->
 			<div class="col-4">
-				<label for="userType">User Type:</label>
-				<div type="text" th:text="${user.userType}" id="userType" />
+				<label for="userType"><strong>User Type :</strong></label>
+				<span type="text" th:text="${user.userType}" id="userType" />
 			</div>
 
 			<!-- Add two more col-4 divs here for the remaining fields -->
 		</div>
-		<div id="result"></div>
 
+		<div class="row justify-content-center" style="margin:10px; padding: 15px;">
+			<div class="col-7" id="result"></div>
+			<div>Rank : <strong id="rank">0</strong></div>
 
+		</div>
 		<script>
+            
+            function getRank() {
+				
+				var attemptQuiz = localStorage.getItem("quizId");
+
+				// Make a get request to your API endpoint
+				fetch(`http://localhost:9090/play/rank/${attemptQuiz}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						if (data.status === "success") {
+							// API request was successful
+						 document.getElementById("rank").textContent = data.payload;
+
+						} else {
+							console.error("Failed to get the rank");
+						}
+					})
+					.catch((error) => {
+						console.error("Error while gettting rank : " + error);
+					});
+			}
+            
+			var requestId = localStorage.getItem("resultId");
 			// Function to make an API request and update the page
 			function fetchAndDisplay(url, targetElement) {
+
+			
+
 				fetch(url)
 					.then(response => response.json())
 					.then(data => {
 						// Update the content of the target element
 						targetElement.innerHTML = `
-                        <p>Correct Answers: ${data.payload[0].correctAnswers}</p>
-                        <p>Wrong Answers: ${data.payload[0].wrongAnswers}</p>
-                        <p>Attempted Questions: ${data.payload[0].attemptQuestions}</p>
-                        <p>Score: ${data.payload[0].score}</p>
-                    `;
+		              <p>Correct Answers: ${data.payload.correctAnswers}</p>
+	              	  <p>Wrong Answers: ${data.payload.wrongAnswers}</p>
+		              <p>Attempted Questions: ${data.payload.attemptQuestions}</p>
+		              <p>Score: ${data.payload.score}</p>
+		               `;
+
 					})
 					.catch(error => {
 						console.error('Error:', error);
 					});
-			}
 
+			}
 			// Use Promise.all to make parallel API requests
 			Promise.all([
-				fetchAndDisplay('http://localhost:9090/play', document.getElementById('result')),
-			])
-				.catch(error => {
-					console.error('Error:', error);
+		    	fetchAndDisplay(`http://localhost:9090/play/${requestId}`, document.getElementById('result')),
+			]).catch(error => {
+				console.error('Error:', error);	
 				});
+				
+			window.addEventListener("load",getRank());
 		</script>
+
+    
 </body>
 
 </html>

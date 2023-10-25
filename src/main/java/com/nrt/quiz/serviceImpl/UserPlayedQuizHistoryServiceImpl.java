@@ -1,13 +1,11 @@
 package com.nrt.quiz.serviceImpl;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
 import com.nrt.quiz.entity.Quiz;
 import com.nrt.quiz.entity.User;
 import com.nrt.quiz.entity.UserPlayedQuizHistory;
@@ -17,6 +15,8 @@ import com.nrt.quiz.repository.UserRepository;
 import com.nrt.quiz.request.UserPlayedQuizHistoryReq;
 import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.service.UserPlayedQuizHistoryService;
+import com.nrt.quiz.util.CommonUtil;
+import com.nrt.quiz.service.ResultComparator;
 
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
@@ -36,21 +36,17 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 	@Override
 	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> addUserQuizHistory(
-			UserPlayedQuizHistoryReq quizHistoryRequest) {
+			UserPlayedQuizHistoryReq quizHistoryRequest, HttpSession session) {
 
 		String userId = null;
+		userId = (String) session.getAttribute("email");
 
-		ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-		if (attr != null) {
-			HttpSession session = attr.getRequest().getSession();
-			userId = (String) session.getAttribute("email");
-		} else {
-			log.info("falied to get the current session");
-		}
-
+		log.info("userid is here " + userId);
 		User user = null;
 		if (userId != null)
-			user = repository.findByEmailAddress(userId);
+			user = repository.findByEmailAddress(CommonUtil.encrypt(userId));
+
+		log.info("userdaa ta is here " + user);
 
 		long quizId = Long.parseLong(quizHistoryRequest.getAttemptQuiz());
 
@@ -66,14 +62,12 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 			int correctAnswers = changeToInt(quizHistoryRequest.getCorrectAnswers());
 
-			int nq = changeToInt(quiz.getNumberOfQuestions());
-
 			UserPlayedQuizHistory history = new UserPlayedQuizHistory();
 			history.setAttemptQuestions(attemptQues);
 			history.setAttemptQuiz(quiz);
 			history.setCorrectAnswers(correctAnswers);
 			history.setScore(markPerQuestions * correctAnswers);
-			history.setWrongAnswers(nq - correctAnswers);
+			history.setWrongAnswers(attemptQues - correctAnswers);
 			history.setUser(user);
 
 			UserPlayedQuizHistory payload = this.historyRepo.save(history);
@@ -99,6 +93,59 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 			return ResponseEntity
 					.ok(new ApiResponse<>("success", "Data saved successfully", userPlayedQuizHistoryList, 200));
+		} catch (Exception e) {
+			log.error("An error occurred while saving data", e);
+			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
+		}
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> getUserQuizResult(String requestId) {
+
+		try {
+
+			long reqId = Long.parseLong(requestId);
+			UserPlayedQuizHistory userPlayedQuizHistoryList = historyRepo.findById(reqId).get();
+
+			return ResponseEntity.ok(
+					new ApiResponse<>("success", "result data fetched  successfully", userPlayedQuizHistoryList, 200));
+		} catch (Exception e) {
+			log.error("An error occurred while saving data", e);
+			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
+		}
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Integer>> addUserRank(long QuizId, HttpSession session) {
+		String userId = null;
+		try {
+			userId = (String) session.getAttribute("email");
+            
+			log.info("userid is here " + userId);
+			User user = new User();
+			if (userId != null)
+				user = repository.findByEmailAddress(CommonUtil.encrypt(userId));
+
+			log.info("userdaa ta is here " + user.toString());
+            
+			Quiz quiz =  quizRepository.findById(QuizId).get();
+			
+			List<UserPlayedQuizHistory> resultList = historyRepo.findAllByAttemptQuiz(quiz);
+			Collections.sort(resultList, new ResultComparator());
+			
+			int rank =0;
+			
+			for(UserPlayedQuizHistory result : resultList) {
+				rank ++;
+				int id = user.getId();
+				String ids = String.valueOf(id);
+				if( String.valueOf(result.getUser().getId())== CommonUtil.decrypt(ids) )  
+				     break;
+
+			}
+			log.info(rank +"is the rank of user");
+			return ResponseEntity.ok(
+					new ApiResponse<>("success", "result list  fetched  successfully", rank, 200));
 		} catch (Exception e) {
 			log.error("An error occurred while saving data", e);
 			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));

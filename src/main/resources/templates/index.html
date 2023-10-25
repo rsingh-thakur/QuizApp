@@ -9,6 +9,17 @@
 	<script src="https://code.jquery.com/jquery-3.3.1.js"
 		integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous">
 		</script>
+
+	<style>
+		.card-body {
+			transition: transform 0.2s;
+		}
+
+		.card-body:hover{
+			transform: scale(1.05);
+		}
+	</style>
+
 	<script>
 		$(function () {
 			$("#header").load("/getCommonHeader");
@@ -56,7 +67,8 @@
 						<h5 class="card-title fw-bold">Daily Quiz</h5>
 						<p class="card-text">The Amazon Daily Quiz has become a highly sought-after online
 							contest in recent years.</p>
-						<center><a href="http://localhost:9090/play/page/home" class="btn btn-primary">Go Daily Quiz</a></center>
+						<center><a href="http://localhost:9090/play/page/home" class="btn btn-primary">Go Daily Quiz</a>
+						</center>
 					</div>
 				</div>
 			</div>

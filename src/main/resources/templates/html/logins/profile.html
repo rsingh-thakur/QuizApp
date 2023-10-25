@@ -92,12 +92,6 @@
 	<div id="sidebar"></div>
 
 	<div class="container">
-		<br>
-		<div>
-			<label for="email"> Enter email :</label>
-			<input type="email" id="email" autocomplete="email" autofocus>
-			<button onclick="getProfile()">GetData</button>
-		</div>
 
 		<div class="main-body">
 
@@ -231,7 +225,8 @@
 							</div>
 							<hr>
 							<div class="row">
-								<div class="col-sm-12"><a class="btn btn-info " target="__blank" href="">Edit</a>
+								<div class="col-sm-12">
+									<button class="btn btn-info" onclick="getUpdatePage(userID)">Edit</button>
 								</div>
 							</div>
 						</div>
@@ -256,13 +251,14 @@
 			</div>
 		</div>
 		<script>
+			let userID = null;
 
 			function getProfile() {
 
-				const email = document.getElementById('email').value;
+				
 
 				// Construct the URL with the email as a query parameter
-				const url = `http://localhost:9090/user/user?userId=${email}`;
+				const url = `http://localhost:9090/user/user`;
 
 				fetch(url, {
 					method: 'GET',
@@ -272,7 +268,6 @@
 						console.log(data);
 
 						if (data.statusCode === 200) {
-							alert("data fectch successfully..!");
 							// Display the custom object properties on the HTML page
 							document.getElementsByClassName('full_name')[0].textContent = data.payload.firstName;
 							document.getElementsByClassName('full_name')[1].textContent = data.payload.firstName;
@@ -284,6 +279,10 @@
 							document.getElementsByClassName('address')[1].textContent = data.payload.address;
 							document.getElementById('phone').textContent = data.payload.phone;
 							document.getElementById('role').textContent = data.payload.role;
+
+							userID = data.payload.userId;
+							console.log(userID);
+						
 						} else {
 							console.error(data);
 							alert("failed to fetche the profile data");
@@ -291,7 +290,18 @@
 
 					})
 
+			} window.addEventListener("load", getProfile());
+
+
+			function getUpdatePage(userID) {
+				
+				window.location.href ='http://localhost:9090/user/page/updateUser/' +userID;
+
 			}
+
+
+
+
 		</script>
 
 

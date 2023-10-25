@@ -39,34 +39,62 @@ public class playQuizController {
 	}
 
 	@GetMapping("/page/{quizId}")
-	public ModelAndView getAddQuizPage(ModelAndView modelAndView, @PathVariable("quizId") String quizId) {
+	public ModelAndView getAddQuizPage(ModelAndView modelAndView, @PathVariable("quizId") String quizId , HttpSession session) {
+		
+		String emailId = (String) session.getAttribute("email");
+		if(emailId!=null) {
 		modelAndView.addObject("quizId", quizId);
 		modelAndView.setViewName("html/playQuiz/playQuiz");
+		}
+		else {
+			modelAndView.setViewName("html/logins/login");
+		}
 		return modelAndView;
 
 	}
 
 	@PostMapping()
 	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> addUserQuizHistory(
-			@RequestBody UserPlayedQuizHistoryReq quizHistoryRequest) {
-		log.info("data is " + quizHistoryRequest.toString());
-		return this.userPlayedQuizHistoryService.addUserQuizHistory(quizHistoryRequest);
+			@RequestBody UserPlayedQuizHistoryReq quizHistoryRequest, HttpSession session) {
+		
+		log.info("data is " + quizHistoryRequest);
+		return this.userPlayedQuizHistoryService.addUserQuizHistory(quizHistoryRequest,session);
 
 	}
-	
+
 	@GetMapping()
 	public ResponseEntity<ApiResponse<List<UserPlayedQuizHistory>>> getUserQuizHistory() {
 		return this.userPlayedQuizHistoryService.getUserQuizHistory();
 
 	}
-	
-	
+
+	@GetMapping("/{requestId}")
+	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> getUserQuizResult( @PathVariable("requestId") String requestId) {
+		
+		return this.userPlayedQuizHistoryService.getUserQuizResult(requestId);
+
+	}
+
 	@GetMapping("/result/")
-	public ModelAndView getResultPage(ModelAndView modelAndView,HttpSession session) {
-	  	modelAndView.addObject("user",userService.getUserDetails((String) session.getAttribute("email")));
+	public ModelAndView getResultPage(ModelAndView modelAndView, HttpSession session) {
+		
+		modelAndView.addObject("user", userService.getUserDetails((String) session.getAttribute("email")));
 		modelAndView.setViewName("html/playQuiz/result");
 		return modelAndView;
 
 	}
+	
+	
+	@GetMapping("/rank/{quizId}")
+	public ResponseEntity<ApiResponse<Integer>> addUserRank(
+			 @PathVariable("quizId") String quizId, HttpSession session) {
+		log.info("addUserRank is " + quizId);
+		long quizID = Long.parseLong(quizId);
+		
+		
+		return this.userPlayedQuizHistoryService.addUserRank(quizID,session);
+
+	}
+	
 
 }

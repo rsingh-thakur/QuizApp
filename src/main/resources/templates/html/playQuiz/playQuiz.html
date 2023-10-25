@@ -163,6 +163,8 @@
 		let attemptedQuestions = 0;
 
 		const quiz_Id = document.getElementById("quiz_Id").value;
+		
+		localStorage.setItem("quizId",quiz_Id);
 
 		const apiUrl = `http://localhost:9090/question/getAllQuestions/${quiz_Id}`;
 
@@ -221,8 +223,6 @@
 			}
 
 
-
-
 			// checks the answer is wrong or correct 
 			function checkAnswer(selectedOption) {
 				const correctAnswer = quizData[currentQuestion].answer;
@@ -255,17 +255,10 @@
 					timeLeft -= 1000;
 					setTimeout(updateTimer, 1000);
 				} else {
-					alert("Time is Over !!!");
+					alert("Time is Over, See result.");
 					handleAutoSubmit(); // Automatically submit the quiz when the timer runs out
 				}
 			}
-
-			//prevButton.addEventListener("click", () => {
-			//	if (currentQuestion > 0) {
-			//		currentQuestion--;
-			//			displayQuestion(currentQuestion);
-			//	}
-			//	});
 
 			nextButton.addEventListener("click", () => {
 				if (currentQuestion < quizData.length - 1) {
@@ -286,8 +279,6 @@
 			const attemptQuiz = document.getElementById("quiz_Id").value;
 			const attemptQuestions = attemptedQuestions;
 
-
-			// Define the data to be sent in the JSON request
 			const requestData = {
 				correctAnswers: correctAnswers, // An array of correct answers
 				attemptQuestions: attemptQuestions, // ID of the quiz attempt
@@ -302,13 +293,13 @@
 				},
 				body: JSON.stringify(requestData),
 			})
-				.then((response) => {
-					if (response.status === 200) {
+				.then((response) => response.json())
+				.then((data) => {
+					if (data.status === "success") {
 						// API request was successful
-						console.log("Quiz results submitted successfully.");
-                        window.location.href = 'http://localhost:9090/play/result/';
-						alert("quiz sumitted successfully" + correctAnswerCount);
-
+						window.location.href = 'http://localhost:9090/play/result/'
+						localStorage.setItem("resultId", data.payload.id);
+					
 
 					} else {
 						console.error("Failed to submit quiz results.");
