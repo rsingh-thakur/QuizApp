@@ -1,6 +1,6 @@
 package com.nrt.quiz.controller;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class UserController {
 	// for user profile page
 	@GetMapping("/page/login")
 	public ModelAndView getLoginPage(ModelAndView modelAndView, HttpSession session) {
-		session.removeAttribute("email");
+		// session.removeAttribute("email");
 		modelAndView.setViewName("html/logins/login");
 		return modelAndView;
 
@@ -62,7 +62,7 @@ public class UserController {
 
 		log.info(userId);
 		long userID = Long.parseLong(userId);
-		
+
 		UserResponse currentUserDetails = userService.getUserDetails(userID);
 
 		modelAndView.addObject("user", currentUserDetails);
@@ -106,7 +106,6 @@ public class UserController {
 	}
 
 	// get user login
-	@SuppressWarnings("deprecation")
 	@PostMapping("/login")
 	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest, HttpSession session) {
 		log.info("login controller invoked ..");
@@ -117,7 +116,7 @@ public class UserController {
 		Boolean isLoggedIn = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
 		if (isLoggedIn) {
 			LoginResponse loginResponse = new LoginResponse("jwtToken will be passed",
-					new Date(new java.util.Date().getDate()));
+					 LocalDate.now());
 			log.info("login controller true.");
 			return new ResponseEntity<ApiResponse<LoginResponse>>(
 					new ApiResponse<>("success", "user logged successfully", loginResponse, 200), HttpStatus.OK);
@@ -147,7 +146,7 @@ public class UserController {
 	// update the user details
 	@PostMapping("/updateUser")
 	public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest userRequest) {
-		log.info("user request"+userRequest.toString());
+		log.info("user request" + userRequest.toString());
 		UserResponse udpatedUser = userService.updateUserDetails(userRequest);
 		if (udpatedUser != null) {
 			return new ResponseEntity<ApiResponse<UserResponse>>(
@@ -163,11 +162,10 @@ public class UserController {
 	// get single user details
 	@GetMapping("/user")
 	public ResponseEntity<ApiResponse<UserResponse>> getUser(HttpSession session) {
-		
+
 		String userId = (String) session.getAttribute("email");
-		
-		
-		log.info("getUser controller invoked .." + userId);
+
+		log.info("getUser controller invoked .." + (String) session.getAttribute("email"));
 		UserResponse userResponse = userService.getUserDetails(userId);
 
 		if (userResponse.getEmailAddress() != null) {
@@ -181,19 +179,19 @@ public class UserController {
 		return new ResponseEntity<>(apiResponse, null, HttpStatus.NOT_FOUND);
 
 	}
-	
-	
+
 	@DeleteMapping("/deleteUser/{userId}")
-	public ResponseEntity<ApiResponse<UserResponse>> deleteUser(@PathVariable("userId") long userId){
+	public ResponseEntity<ApiResponse<UserResponse>> deleteUser(@PathVariable("userId") long userId) {
 		log.info("userId deleteUser invoked .." + userId);
-		Boolean isDeleted =  userService.deleteUserRecord(userId);
+		Boolean isDeleted = userService.deleteUserRecord(userId);
 		if (isDeleted) {
 			return new ResponseEntity<ApiResponse<UserResponse>>(
-					new ApiResponse<UserResponse>("success", "user is deleted  successfully",null, 200),
+					new ApiResponse<UserResponse>("success", "user is deleted  successfully", null, 200),
 					HttpStatus.OK);
 		} else {
-			return new ResponseEntity<ApiResponse<UserResponse>>(new ApiResponse<UserResponse>("Failed",
-					"failed to delete the user", null, 404), HttpStatus.NO_CONTENT);
+			return new ResponseEntity<ApiResponse<UserResponse>>(
+					new ApiResponse<UserResponse>("Failed", "failed to delete the user", null, 404),
+					HttpStatus.NO_CONTENT);
 		}
 
 	}

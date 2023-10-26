@@ -14,5 +14,6 @@ public class Constants {
 	public static final String TYPE_TEACHER = "TEACHER";
 
 	public static final String UPLOAD_DIR = "static/images";
+
 	
 }

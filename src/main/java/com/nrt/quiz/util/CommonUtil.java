@@ -102,7 +102,7 @@ public class CommonUtil {
 			try {
 				response.setFirstName(CommonUtil.decrypt(user.getFirstName()));
 				response.setLastName(CommonUtil.decrypt(user.getLastName()));
-				response.setEmailAddress(CommonUtil.decrypt(user.getEmailAddress()));
+				response.setEmailAddress(user.getEmailAddress());
 				response.setUserType(CommonUtil.decrypt(user.getUserType()));
 				response.setAddress(CommonUtil.decrypt(user.getAddress()));
 				response.setPhone(CommonUtil.decrypt(user.getPhone()));
@@ -124,11 +124,12 @@ public class CommonUtil {
 		if (userRequest != null) {
 			user.setFirstName(CommonUtil.encrypt(userRequest.getFirstName()));
 			user.setLastName(CommonUtil.encrypt(userRequest.getLastName()));
-			user.setEmailAddress(CommonUtil.encrypt(userRequest.getEmailAddress()));
-			user.setPassword(CommonUtil.encrypt(userRequest.getPassword()));
+			user.setEmailAddress(userRequest.getEmailAddress());
+			user.setPassword(userRequest.getPassword());
 			user.setUserType(CommonUtil.encrypt(userRequest.getUserType()));
 			user.setAddress(CommonUtil.encrypt(userRequest.getAddress()));
 			user.setPhone(CommonUtil.encrypt(userRequest.getPhone()));
+			user.setStatus(0);
 		}
 		return user;
 	}

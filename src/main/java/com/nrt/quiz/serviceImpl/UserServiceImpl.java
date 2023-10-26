@@ -1,28 +1,65 @@
 package com.nrt.quiz.serviceImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.nrt.quiz.authentication.CustomUserDetails;
+import com.nrt.quiz.authentication.CustomUserService;
+import com.nrt.quiz.authentication.JwtUtil;
 import com.nrt.quiz.entity.User;
+import com.nrt.quiz.exception.DeactivatedUserException;
+import com.nrt.quiz.repository.RoleRepository;
 import com.nrt.quiz.repository.UserRepository;
+import com.nrt.quiz.request.LoginRequest;
 import com.nrt.quiz.request.UserRequest;
+import com.nrt.quiz.response.ApiResponse;
+import com.nrt.quiz.response.LoginResponse;
 import com.nrt.quiz.response.UserResponse;
 import com.nrt.quiz.service.UserService;
 import com.nrt.quiz.util.CommonUtil;
 
 import lombok.extern.log4j.Log4j2;
 
+@Configuration
 @Service
 @Log4j2
 public class UserServiceImpl implements UserService {
 	@Autowired
 	UserRepository userRepository;
 
+	@Autowired
+	private AuthenticationManager authenticationManager;
+
+	@Autowired
+	RoleRepository roleRepository;
+
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Autowired
+	private CustomUserService userDetailsService;
+
 	// create new user record
 	@Override
 	public UserResponse createUser(UserRequest userRequest) {
+
+		String password = userRequest.getPassword();
+
+		BCryptPasswordEncoder encoder = this.bCryptPasswordEncoder();
+
+		String encodedPassword = encoder.encode(password);
+
+		userRequest.setPassword(encodedPassword);
+
 		return CommonUtil.decriptUser(userRepository.save(CommonUtil.encriptUserDetails(userRequest)));
 	}
 
@@ -112,4 +149,38 @@ public class UserServiceImpl implements UserService {
 		return Boolean.FALSE;
 	}
 
+	@Override
+	public ResponseEntity<ApiResponse<LoginResponse>> generateToken(LoginRequest loginRequest) {
+		String token = null;
+		User user = null;
+
+		log.info("request data : "+loginRequest.toString());
+		try {
+			this.authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+			CustomUserDetails userDetails = this.userDetailsService.loadUserByUsername(loginRequest.getEmail());
+			token = jwtUtil.generateToken(userDetails);
+			user = userRepository.findByEmailAddress(loginRequest.getEmail());
+			log.info("user found ....");
+			return ResponseEntity.ok(new ApiResponse<LoginResponse>("success", "token fetched",
+					new LoginResponse(token, user.getCreationDate()), 200));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("exception thrown Exception handled ");
+			if (e instanceof DeactivatedUserException) {
+				log.error("DeactivatedUserException thrown DeactivatedUserException handled ");
+				return ResponseEntity
+						.ofNullable(new ApiResponse<LoginResponse>("Failed", "token not generated", null, 444));
+			}
+
+		}
+		return ResponseEntity.ofNullable(new ApiResponse<LoginResponse>("Failed", "token not generated", null, 444));
+
+	}
+
+	@Bean
+	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
