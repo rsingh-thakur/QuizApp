@@ -18,7 +18,6 @@ import com.nrt.quiz.service.UserPlayedQuizHistoryService;
 import com.nrt.quiz.util.CommonUtil;
 import com.nrt.quiz.service.ResultComparator;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
 @Service
@@ -36,15 +35,9 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 	@Override
 	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> addUserQuizHistory(
-			UserPlayedQuizHistoryReq quizHistoryRequest, HttpSession session) {
+			UserPlayedQuizHistoryReq quizHistoryRequest) {
 
-		String userId = null;
-		userId = (String) session.getAttribute("email");
-
-		log.info("userid is here " + userId);
-		User user = null;
-		if (userId != null)
-			user = repository.findByEmailAddress(CommonUtil.encrypt(userId));
+		User user = repository.findByEmailAddress(CommonUtil.getCurrentUserEmailAddress());
 
 		log.info("userdaa ta is here " + user);
 
@@ -116,36 +109,28 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Integer>> addUserRank(long QuizId, HttpSession session) {
-		String userId = null;
+	public ResponseEntity<ApiResponse<Integer>> addUserRank(long QuizId) {
 		try {
-			userId = (String) session.getAttribute("email");
-            
-			log.info("userid is here " + userId);
-			User user = new User();
-			if (userId != null)
-				user = repository.findByEmailAddress(CommonUtil.encrypt(userId));
-
+			User user = repository.findByEmailAddress(CommonUtil.getCurrentUserEmailAddress());
 			log.info("userdaa ta is here " + user.toString());
-            
-			Quiz quiz =  quizRepository.findById(QuizId).get();
-			
+
+			Quiz quiz = quizRepository.findById(QuizId).get();
+
 			List<UserPlayedQuizHistory> resultList = historyRepo.findAllByAttemptQuiz(quiz);
 			Collections.sort(resultList, new ResultComparator());
-			
-			int rank =0;
-			
-			for(UserPlayedQuizHistory result : resultList) {
-				rank ++;
+
+			int rank = 0;
+
+			for (UserPlayedQuizHistory result : resultList) {
+				rank++;
 				int id = user.getId();
 				String ids = String.valueOf(id);
-				if( String.valueOf(result.getUser().getId())== CommonUtil.decrypt(ids) )  
-				     break;
+				if (String.valueOf(result.getUser().getId()) == CommonUtil.decrypt(ids))
+					break;
 
 			}
-			log.info(rank +"is the rank of user");
-			return ResponseEntity.ok(
-					new ApiResponse<>("success", "result list  fetched  successfully", rank, 200));
+			log.info(rank + "is the rank of user");
+			return ResponseEntity.ok(new ApiResponse<>("success", "result list  fetched  successfully", rank, 200));
 		} catch (Exception e) {
 			log.error("An error occurred while saving data", e);
 			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));

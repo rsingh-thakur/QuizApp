@@ -8,11 +8,14 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nrt.quiz.constants.Constants;
 import com.nrt.quiz.entity.User;
+import com.nrt.quiz.repository.UserRepository;
 import com.nrt.quiz.request.UserRequest;
 import com.nrt.quiz.response.UserResponse;
 
@@ -22,6 +25,15 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class CommonUtil {
 
+	public CommonUtil(UserRepository userRepository) {
+		super();
+		CommonUtil.userRepository = userRepository;
+	}
+
+    private static UserRepository userRepository;
+
+	
+	
 	private static final String ALGORITHM = "AES";
 	private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
 	private static final String SECRET_KEY = "1234567801234578"; // Replace with your secret key
@@ -61,7 +73,7 @@ public class CommonUtil {
 			return new String(decryptedData);
 
 		} catch (Exception e) {
-			log.warn("exception occoured "+e.getMessage());
+			log.warn("exception occoured " + e.getMessage());
 		}
 		return encryptedData;
 
@@ -134,4 +146,22 @@ public class CommonUtil {
 		return user;
 	}
 
+	public static UserResponse getCurrentUserDetails() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		UserResponse decriptUser = null;
+		log.info(" address:"+authentication.getName());
+		if (authentication != null) {
+			User userDetails = userRepository.findByEmailAddress(authentication.getName());
+			log.info("user address:"+authentication.getName());
+			decriptUser = decriptUser(userDetails);
+		}
+		return decriptUser;
+	}
+
+	public static String getCurrentUserEmailAddress() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		return authentication.getName();
+	}
+
+	
 }

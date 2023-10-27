@@ -3,6 +3,7 @@ package com.nrt.quiz.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import com.nrt.quiz.service.RoleService;
 
 @RestController
 @RequestMapping("/roles")
+@PreAuthorize("hasRole('ADMIN')")
 public class RoleController {
 
 	@Autowired
@@ -23,6 +25,7 @@ public class RoleController {
 
 	// create new role
 	@PostMapping("/createRole")
+	
 	public Role createRole(@RequestBody Role role) {
 		return roleService.saveRole(role);
 

@@ -9,8 +9,6 @@ import com.nrt.quiz.entity.User;
 import com.nrt.quiz.exception.DeactivatedUserException;
 import com.nrt.quiz.repository.UserRepository;
 import com.nrt.quiz.serviceImpl.PermissionService;
-import com.nrt.quiz.util.CommonUtil;
-
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2

@@ -19,14 +19,14 @@ public interface UserService {
 
 	public List<UserResponse> getAllUesrsList();
 
-	public UserResponse getUserDetails(String userId);
-
-	public UserResponse getUserDetails(long userId);
+	public UserResponse getUserDetails();
 
 	public UserResponse updateUserDetails(UserRequest userRequest);
 
 	public Boolean deleteUserRecord(long userId);
 
 	public ResponseEntity<ApiResponse<LoginResponse>> generateToken(LoginRequest loginRequest);
+
+	public UserResponse getUserDetails(long userID);
 
 }

@@ -46,7 +46,7 @@
 <body>
 	<!--  navbar code is start here  -->
 	<section>
-		<nav class="navbar navbar-expand-lg fixed-top navbar-dark"
+		<nav class="navbar navbar-expand-md fixed-top navbar-dark"
 			style="background-color:#212529; padding: 0; height: 60px;">
 			<div class="container-fluid">
 				<img src="https://png.pngtree.com/png-vector/20220827/ourmid/pngtree-quiz-time-png-image_6125411.png"
@@ -62,7 +62,7 @@
 				<div class="collapse navbar-collapse d-flex justify-content-end" id="navbarSupportedContent">
 					<ul class="navbar-nav">
 						<li class="nav-item">
-							<a class="nav-link active" aria-current="page" href="/">Home</a>
+							<a class="nav-link active" aria-current="page" href="/user/index">Home</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link active" aria-current="page" href="#">About</a>
@@ -71,12 +71,16 @@
 							<a class="nav-link active" aria-current="page" href="#">Contact</a>
 						</li>
 					</ul>
-					<a class="btn  log01 text-light ,nav-item" id="profileButton" onclick="getProfilePage()">Profile</a>
-					<a class="btn gradient-custom-2 mx-3 log01 text-light" id="logoutButton"
-						href="/user/page/login">LogOut</a>
+					<!-- Conditionally render login or profile and logout buttons -->
+
+					<a class="btn log01 text-light nav-item" id="profileButton" onclick="getProfilePage()">Profile</a>
+					<a class="btn gradient-custom-2 mx-3 log01 text-light nav-item" id="logoutButton"
+						href="/logout">LogOut</a>
+
 				</div>
 			</div>
 		</nav>
+
 
 	</section>
 

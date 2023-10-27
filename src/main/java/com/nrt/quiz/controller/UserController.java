@@ -1,11 +1,11 @@
 package com.nrt.quiz.controller;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.nrt.quiz.request.LoginRequest;
 import com.nrt.quiz.request.UserRequest;
 import com.nrt.quiz.response.ApiResponse;
-import com.nrt.quiz.response.LoginResponse;
 import com.nrt.quiz.response.UserResponse;
 import com.nrt.quiz.service.UserService;
 
@@ -36,7 +34,7 @@ public class UserController {
 	UserService userService;
 
 	// for index page
-	@RequestMapping("/")
+	@RequestMapping("/index")
 	public String homePage() {
 		return "index";
 	}
@@ -44,13 +42,13 @@ public class UserController {
 	// for user profile page
 	@GetMapping("/page/login")
 	public ModelAndView getLoginPage(ModelAndView modelAndView, HttpSession session) {
-		// session.removeAttribute("email");
 		modelAndView.setViewName("html/logins/login");
 		return modelAndView;
 
 	}
 
 	@GetMapping("/page/usersList")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('User-LIST')")
 	public ModelAndView getUsersListPage(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/logins/usersList");
 		return modelAndView;
@@ -58,6 +56,7 @@ public class UserController {
 	}
 
 	@GetMapping("/page/updateUser/{userId}")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('User-UPDATE')")
 	public ModelAndView getUserUpdatePage(ModelAndView modelAndView, @PathVariable("userId") String userId) {
 
 		log.info(userId);
@@ -105,30 +104,9 @@ public class UserController {
 
 	}
 
-	// get user login
-	@PostMapping("/login")
-	public ResponseEntity<ApiResponse<LoginResponse>> userLogin(@RequestBody LoginRequest loginRequest, HttpSession session) {
-		log.info("login controller invoked ..");
-		session.setMaxInactiveInterval(20000);
-		 session.setAttribute("email", loginRequest.getEmail());
-	        session.setAttribute("password", loginRequest.getPassword());
-		
-		Boolean isLoggedIn = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-		if (isLoggedIn) {
-			LoginResponse loginResponse = new LoginResponse("jwtToken will be passed",
-					 LocalDate.now());
-			log.info("login controller true.");
-			return new ResponseEntity<ApiResponse<LoginResponse>>(
-					new ApiResponse<>("success", "user logged successfully", loginResponse, 200), HttpStatus.OK);
-		}
-		log.info("login controller False.");
-		return new ResponseEntity<ApiResponse<LoginResponse>>(
-				new ApiResponse<>("Failed", "user login failed", null, 403), HttpStatus.FORBIDDEN);
-
-	}
-
 	// get all users list
 	@GetMapping("/usersList")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('User-LIST')")
 	public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
 		List<UserResponse> userResponse = userService.getAllUesrsList();
 		if (userResponse != null) {
@@ -145,6 +123,7 @@ public class UserController {
 
 	// update the user details
 	@PostMapping("/updateUser")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('User-UPDATE')")
 	public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserRequest userRequest) {
 		log.info("user request" + userRequest.toString());
 		UserResponse udpatedUser = userService.updateUserDetails(userRequest);
@@ -161,12 +140,10 @@ public class UserController {
 
 	// get single user details
 	@GetMapping("/user")
-	public ResponseEntity<ApiResponse<UserResponse>> getUser(HttpSession session) {
-
-		String userId = (String) session.getAttribute("email");
-
-		log.info("getUser controller invoked .." + (String) session.getAttribute("email"));
-		UserResponse userResponse = userService.getUserDetails(userId);
+	@PreAuthorize("hasRole('ADMIN') or hasRole('User-VIEW')")
+	public ResponseEntity<ApiResponse<UserResponse>> getUser() {
+		
+		UserResponse userResponse = userService.getUserDetails();
 
 		if (userResponse.getEmailAddress() != null) {
 			ApiResponse<UserResponse> apiResponse = new ApiResponse<UserResponse>("success",
@@ -181,6 +158,7 @@ public class UserController {
 	}
 
 	@DeleteMapping("/deleteUser/{userId}")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('User-DELETE')")
 	public ResponseEntity<ApiResponse<UserResponse>> deleteUser(@PathVariable("userId") long userId) {
 		log.info("userId deleteUser invoked .." + userId);
 		Boolean isDeleted = userService.deleteUserRecord(userId);
@@ -195,5 +173,5 @@ public class UserController {
 		}
 
 	}
-
+	
 }

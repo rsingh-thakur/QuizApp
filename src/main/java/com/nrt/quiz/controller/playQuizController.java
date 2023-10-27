@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,6 @@ import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.service.UserPlayedQuizHistoryService;
 import com.nrt.quiz.service.UserService;
 
-import jakarta.servlet.http.HttpSession;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
@@ -32,6 +32,7 @@ public class playQuizController {
 	UserService userService;
 
 	@GetMapping("/page/home")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-VIEW')")
 	public ModelAndView getAddCategoryPage(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/playQuiz/playQuizHome");
 		return modelAndView;
@@ -39,62 +40,55 @@ public class playQuizController {
 	}
 
 	@GetMapping("/page/{quizId}")
-	public ModelAndView getAddQuizPage(ModelAndView modelAndView, @PathVariable("quizId") String quizId , HttpSession session) {
-		
-		String emailId = (String) session.getAttribute("email");
-		if(emailId!=null) {
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-VIEW')")
+	public ModelAndView getAddQuizPage(ModelAndView modelAndView, @PathVariable("quizId") String quizId) {
 		modelAndView.addObject("quizId", quizId);
 		modelAndView.setViewName("html/playQuiz/playQuiz");
-		}
-		else {
-			modelAndView.setViewName("html/logins/login");
-		}
 		return modelAndView;
-
 	}
 
 	@PostMapping()
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-ADD')")
 	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> addUserQuizHistory(
-			@RequestBody UserPlayedQuizHistoryReq quizHistoryRequest, HttpSession session) {
-		
+			@RequestBody UserPlayedQuizHistoryReq quizHistoryRequest) {
+
 		log.info("data is " + quizHistoryRequest);
-		return this.userPlayedQuizHistoryService.addUserQuizHistory(quizHistoryRequest,session);
+		return this.userPlayedQuizHistoryService.addUserQuizHistory(quizHistoryRequest);
 
 	}
 
 	@GetMapping()
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-LIST')")
 	public ResponseEntity<ApiResponse<List<UserPlayedQuizHistory>>> getUserQuizHistory() {
 		return this.userPlayedQuizHistoryService.getUserQuizHistory();
 
 	}
 
 	@GetMapping("/{requestId}")
-	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> getUserQuizResult( @PathVariable("requestId") String requestId) {
-		
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-VIEW')")
+	public ResponseEntity<ApiResponse<UserPlayedQuizHistory>> getUserQuizResult(
+			@PathVariable("requestId") String requestId) {
+
 		return this.userPlayedQuizHistoryService.getUserQuizResult(requestId);
 
 	}
 
 	@GetMapping("/result/")
-	public ModelAndView getResultPage(ModelAndView modelAndView, HttpSession session) {
-		
-		modelAndView.addObject("user", userService.getUserDetails((String) session.getAttribute("email")));
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-VIEW')")
+	public ModelAndView getResultPage(ModelAndView modelAndView) {
+		modelAndView.addObject("user", userService.getUserDetails());
 		modelAndView.setViewName("html/playQuiz/result");
 		return modelAndView;
-
 	}
-	
-	
+
 	@GetMapping("/rank/{quizId}")
-	public ResponseEntity<ApiResponse<Integer>> addUserRank(
-			 @PathVariable("quizId") String quizId, HttpSession session) {
+	@PreAuthorize("hasRole('ADMIN') or hasRole('Play-VIEW')")
+	public ResponseEntity<ApiResponse<Integer>> addUserRank(@PathVariable("quizId") String quizId) {
 		log.info("addUserRank is " + quizId);
 		long quizID = Long.parseLong(quizId);
-		
-		
-		return this.userPlayedQuizHistoryService.addUserRank(quizID,session);
+
+		return this.userPlayedQuizHistoryService.addUserRank(quizID);
 
 	}
-	
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,8 +30,8 @@ public class QuizController {
 	private QuizService quizService;
 
 	@PostMapping()
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-ADD')")
 	public ResponseEntity<ApiResponse<Quiz>> addQuiz( @RequestBody QuizRequest quizRequest) {
-//        return ResponseEntity.ok(this.quizService.addQuiz(quizEntity));
 		log.info("data is "+quizRequest.toString());
 		log.info("getCategoryId; is "+quizRequest.getCategoryId());
 		return this.quizService.addQuiz(quizRequest);
@@ -39,19 +40,21 @@ public class QuizController {
 
 	// update category
 	@PutMapping("/{quizId}")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-UPDATE')")
 	public ResponseEntity<ApiResponse<Quiz>> updateQuiz(@PathVariable("quizId") Long quizId, @RequestBody Quiz quiz) {
 		return this.quizService.updateQuiz(quizId, quiz);
 	}
 
 	// get all category
 	@GetMapping("/")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-LIST')")
 	public ResponseEntity<ApiResponse<List<Quiz>>> getQuizzes() {
 		return this.quizService.getAllQuizzes();
 	}
 
 	// get single category
 	@GetMapping("/{quizId}")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-VIEW')")
 	public ResponseEntity<ApiResponse<Quiz>> getQuiz(@PathVariable("quizId") Long quizId) {
 		return this.quizService.get_Quiz(quizId);
 	}
@@ -62,12 +65,14 @@ public class QuizController {
 	}
 
 	@GetMapping("/page")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-VIEW')")
 	public ModelAndView getPageQuiz(ModelAndView modelAndView) {
 		modelAndView.setViewName("html/QuizPages/ListQuiz");
 		return modelAndView;
 	}
 
 	@GetMapping("/page/{categoryId}")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-VIEW')")
 	public ModelAndView getPageQuiz(ModelAndView modelAndView, @PathVariable("categoryId") String categoryId) {
 		modelAndView.addObject("categoryId",categoryId);
 		modelAndView.setViewName("html/QuizPages/quizByCategory");
@@ -75,6 +80,7 @@ public class QuizController {
 	}
 	
 	@GetMapping("/getAllQuizzes/{categoryId}")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-LIST')")
 	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzesUnderCategory(@PathVariable("categoryId") String categoryId) {
 		return this.quizService.getAllQuizzesUnderCategory(categoryId);
 	}

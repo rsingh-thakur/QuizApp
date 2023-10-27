@@ -97,11 +97,9 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponse getUserDetails(String userId) {
-		log.info("user address is : " + userId);
-		User user = userRepository.findByEmailAddress(CommonUtil.encrypt(userId));
-		log.info("user found " + user.getAddress());
-		return CommonUtil.decriptUser(user);
+	public UserResponse getUserDetails() {
+		log.info("users data is fetched here : " +CommonUtil.getCurrentUserDetails());
+		return CommonUtil.getCurrentUserDetails();
 	}
 
 	// updates the user details
@@ -154,7 +152,7 @@ public class UserServiceImpl implements UserService {
 		String token = null;
 		User user = null;
 
-		log.info("request data : "+loginRequest.toString());
+		log.info("request data : " + loginRequest.toString());
 		try {
 			this.authenticationManager.authenticate(
 					new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
