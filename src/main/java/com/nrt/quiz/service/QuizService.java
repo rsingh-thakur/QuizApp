@@ -4,6 +4,7 @@ import com.nrt.quiz.entity.Quiz;
 import com.nrt.quiz.request.QuizRequest;
 import com.nrt.quiz.request.SearchPaginationRequest;
 import com.nrt.quiz.response.ApiResponse;
+import com.nrt.quiz.response.UserPlayedQuizHistoryResponse;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface QuizService {
     public Quiz getQuiz(Long quizID);
 	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzes();
 	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzesUnderCategory(String categoryId);
+	public ResponseEntity<ApiResponse<List<UserPlayedQuizHistoryResponse>>> getAttemptQuizzesList();
+	public ResponseEntity<String> changeStatus(long quizId);
 }

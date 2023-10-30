@@ -2,12 +2,18 @@ package com.nrt.quiz.serviceImpl;
 
 import com.nrt.quiz.entity.Category;
 import com.nrt.quiz.entity.Quiz;
+import com.nrt.quiz.entity.User;
+import com.nrt.quiz.entity.UserPlayedQuizHistory;
 import com.nrt.quiz.repository.CategoryRepository;
 import com.nrt.quiz.repository.QuizRepository;
+import com.nrt.quiz.repository.UserPlayedQuizHistoryRepo;
+import com.nrt.quiz.repository.UserRepository;
 import com.nrt.quiz.request.QuizRequest;
 import com.nrt.quiz.request.SearchPaginationRequest;
 import com.nrt.quiz.response.ApiResponse;
+import com.nrt.quiz.response.UserPlayedQuizHistoryResponse;
 import com.nrt.quiz.service.QuizService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +22,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,6 +39,10 @@ public class QuizServiceImpl implements QuizService {
 
 	@Autowired
 	CategoryRepository categoryRepository;
+	@Autowired
+	UserPlayedQuizHistoryRepo userPlayedQuizHistoryRepo;
+	@Autowired
+	UserRepository userRepository;
 
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -46,7 +59,7 @@ public class QuizServiceImpl implements QuizService {
 			quiz.setCategories(category);
 			quiz.setMaxMarks(quizRequest.getMaxMarks());
 			quiz.setDescription(quizRequest.getDescription());
-			quiz.setActive(Boolean.getBoolean(quizRequest.getActive()));
+			quiz.setStatus(Boolean.getBoolean(quizRequest.getActive()));
 			quiz.setNumberOfQuestions(quizRequest.getNumberOfQuestions());
 
 			Quiz payload = this.quizRepository.save(quiz);
@@ -170,20 +183,21 @@ public class QuizServiceImpl implements QuizService {
 	@Override
 	public ResponseEntity<ApiResponse<List<Quiz>>> getAllQuizzesUnderCategory(String categoryId) {
 		try {
-			log.info("for one category "+categoryId);
-			
+			log.info("for one category " + categoryId);
+
 			long categoryID = Long.parseLong(categoryId);
 			Category categoty = categoryRepository.findById(categoryID).get();
 
 			List<Quiz> categotysList = quizRepository.findAllByCategories(categoty);
-      
+
 			if (!categotysList.isEmpty())
 				return ResponseEntity
 						.ok(new ApiResponse<>("success", "Quizzes data fetched successfully", categotysList, 200));
 			else {
 				log.info("not questions data found for this quiz id ");
-				 return new ResponseEntity<>(new ApiResponse<>("failed", "Quizzes not found", null, 404), HttpStatus.NOT_FOUND);
-		    }
+				return new ResponseEntity<>(new ApiResponse<>("failed", "Quizzes not found", null, 404),
+						HttpStatus.NOT_FOUND);
+			}
 		} catch (
 
 		Exception e) {
@@ -191,6 +205,58 @@ public class QuizServiceImpl implements QuizService {
 			log.error("An error occurred while deleting data", e);
 			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
 		}
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<UserPlayedQuizHistoryResponse>>> getAttemptQuizzesList() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		User userDetails = userRepository.findByEmailAddress(authentication.getName());
+
+		List<UserPlayedQuizHistory> listOfhistory = userPlayedQuizHistoryRepo.findAllByUserId(userDetails.getId());
+		log.info("GOT THE USER  :" + listOfhistory);
+
+		List<UserPlayedQuizHistoryResponse> responseList = new ArrayList<>();
+		for (UserPlayedQuizHistory his : listOfhistory) {
+
+			UserPlayedQuizHistoryResponse userPlayedQuizHistoryResponse = new UserPlayedQuizHistoryResponse();
+
+			log.info("the getAttemptQuiz is here :" + his.getAttemptQuizId());
+			Quiz quiz = quizRepository.findById(his.getAttemptQuizId()).get();
+
+			userPlayedQuizHistoryResponse.setAttemptQuestions(his.getAttemptQuestions());
+			userPlayedQuizHistoryResponse.setAttemptQuizName(quiz.getTitle());
+			userPlayedQuizHistoryResponse.setScore(his.getScore());
+			userPlayedQuizHistoryResponse.setCorrectAnswers(his.getCorrectAnswers());
+			userPlayedQuizHistoryResponse.setWrongAnswers(his.getWrongAnswers());
+
+			responseList.add(userPlayedQuizHistoryResponse);
+
+		}
+
+		if (listOfhistory.size() != 0) {
+			return ResponseEntity
+					.ok(new ApiResponse<>("success", "ListOfhistory fetched successfully", responseList, 200));
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ApiResponse<>("error", "Quiz not found", null, 404));
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public ResponseEntity changeStatus(long quizId) {
+		Quiz quiz = quizRepository.findById(quizId).get();
+		Boolean isActive = quiz.getStatus();
+
+		if (isActive) {
+			quiz.setStatus(Boolean.FALSE);
+			log.info("status changed to false");
+		} else {
+			quiz.setStatus(Boolean.TRUE);
+		}
+		quizRepository.save(quiz);
+		return new ResponseEntity(HttpStatus.OK);
 
 	}
 }

@@ -1,6 +1,5 @@
 package com.nrt.quiz.serviceImpl;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import com.nrt.quiz.request.UserPlayedQuizHistoryReq;
 import com.nrt.quiz.response.ApiResponse;
 import com.nrt.quiz.service.UserPlayedQuizHistoryService;
 import com.nrt.quiz.util.CommonUtil;
-import com.nrt.quiz.service.ResultComparator;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -39,14 +37,14 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 		User user = repository.findByEmailAddress(CommonUtil.getCurrentUserEmailAddress());
 
-		log.info("userdaa ta is here " + user);
+		log.info("user data is here " + user);
 
 		long quizId = Long.parseLong(quizHistoryRequest.getAttemptQuiz());
 
 		try {
 
 			log.info("category id is : " + quizHistoryRequest.getAttemptQuiz());
-			Quiz quiz = quizRepository.findById(quizId).get();
+			Quiz quiz = quizRepository.findById((long) quizId).get();
 
 			quiz.getMaxMarks();
 			int markPerQuestions = changeToInt(quiz.getNumberOfQuestions()) / changeToInt(quiz.getMaxMarks());
@@ -57,13 +55,13 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 			UserPlayedQuizHistory history = new UserPlayedQuizHistory();
 			history.setAttemptQuestions(attemptQues);
-			history.setAttemptQuiz(quiz);
+			history.setAttemptQuizId(quizId);
 			history.setCorrectAnswers(correctAnswers);
 			history.setScore(markPerQuestions * correctAnswers);
 			history.setWrongAnswers(attemptQues - correctAnswers);
-			history.setUser(user);
+			history.setUserId(user.getId());
 
-			UserPlayedQuizHistory payload = this.historyRepo.save(history);
+			UserPlayedQuizHistory payload = historyRepo.save(history);
 			return ResponseEntity.ok(new ApiResponse<>("success", "Data saved successfully", payload, 200));
 		} catch (Exception e) {
 			// Handle the exception here and log it
@@ -75,17 +73,16 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 	public int changeToInt(String str) {
 		if (str != null)
 			return Integer.parseInt(str);
-
-		return 3;
+		return 0;
 	}
 
 	@Override
 	public ResponseEntity<ApiResponse<List<UserPlayedQuizHistory>>> getUserQuizHistory() {
 		try {
 			List<UserPlayedQuizHistory> userPlayedQuizHistoryList = historyRepo.findAll();
-
+			log.info("An error occurreduser " + userPlayedQuizHistoryList);
 			return ResponseEntity
-					.ok(new ApiResponse<>("success", "Data saved successfully", userPlayedQuizHistoryList, 200));
+					.ok(new ApiResponse<>("success", "Data fetched successfully", userPlayedQuizHistoryList, 200));
 		} catch (Exception e) {
 			log.error("An error occurred while saving data", e);
 			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
@@ -110,30 +107,23 @@ public class UserPlayedQuizHistoryServiceImpl implements UserPlayedQuizHistorySe
 
 	@Override
 	public ResponseEntity<ApiResponse<Integer>> addUserRank(long QuizId) {
-		try {
-			User user = repository.findByEmailAddress(CommonUtil.getCurrentUserEmailAddress());
-			log.info("userdaa ta is here " + user.toString());
-
-			Quiz quiz = quizRepository.findById(QuizId).get();
-
-			List<UserPlayedQuizHistory> resultList = historyRepo.findAllByAttemptQuiz(quiz);
-			Collections.sort(resultList, new ResultComparator());
-
-			int rank = 0;
-
-			for (UserPlayedQuizHistory result : resultList) {
-				rank++;
-				int id = user.getId();
-				String ids = String.valueOf(id);
-				if (String.valueOf(result.getUser().getId()) == CommonUtil.decrypt(ids))
-					break;
-
-			}
-			log.info(rank + "is the rank of user");
-			return ResponseEntity.ok(new ApiResponse<>("success", "result list  fetched  successfully", rank, 200));
-		} catch (Exception e) {
-			log.error("An error occurred while saving data", e);
-			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
-		}
+		return null;
+//		try {
+//			User user = repository.findByEmailAddress(CommonUtil.getCurrentUserEmailAddress());
+//			log.info("userdaa ta is here " + user.toString());
+//
+//			Quiz quiz = quizRepository.findById(QuizId).get();
+//
+//			List<UserPlayedQuizHistory> resultList = historyRepo.findAllByAttemptQuiz(QuizId);
+//			Collections.sort(resultList, new ResultComparator());
+//
+//			int rank = 0;
+//			
+//			log.info(rank + "is the rank of user");
+//			return ResponseEntity.ok(new ApiResponse<>("success", "result list  fetched  successfully", rank, 200));
+//		} catch (Exception e) {
+//			log.error("An error occurred while saving data", e);
+//			return ResponseEntity.internalServerError().body(new ApiResponse<>("error", e.getMessage(), null, 500));
+//		}
 	}
 }

@@ -78,7 +78,7 @@
 							<th scope="col">Description</th>
 							<th scope="col">Max Marks</th>
 							<th scope="col">Num.of Ques.</th>
-							<th scope="col">active</th>
+							<th scope="col">Active</th>
 							<th scope="col">Action</th>
 						</tr>
 					</thead>
@@ -318,7 +318,7 @@
                                     <td class="rowId">${quiz.description}</td>
                                     <td class="rowId">${quiz.maxMarks}</td>
                                     <td class="rowId">${quiz.numberOfQuestions}</td>
-                                    <td class="rowId">${quiz.active}</td>
+                                    <td class="rowId " id="statusId" onclick="updateStatus(${quiz.status},${quiz.id})"> <button id="buttonId" class="btn btn-outline-primary">${quiz.status}</button></td>
                                   <td>
 								     <a href="http://localhost:9090/quiz/page/updateQuiz/${quiz.id}"><i title="Edit Quiz" class="fa-solid fa-pen-to-square mx-2"></i></a>
 								     <button onclick="deleteQuiz(${quiz.id})" style="border:none"> <i title="Delete Quiz" class="fa-solid fa-trash mx-2 text-danger"></i></button>
@@ -339,7 +339,35 @@
 
 
 
+		function updateStatus(currentStatus, quizId) {
+
+			const newStatus = currentStatus === 'true' ? 'false' : 'true';
+
+			const button = document.getElementById("buttonId");
+
+			// Make an API call to update the quiz status
+			fetch(`http://localhost:9090/quiz/updateStatus/${quizId}`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			})
+				.then((response) => {
+					if (response.ok) {
+						// If the response status is 200 (OK), change the button color to green and text to "true"
+						button.innerHTML = "true";
+						getQuizList();
+					}
+				})
+				.catch((error) => {
+					console.error("Error:", error);
+				});
+		}
+
+
+
 		function deleteQuiz(quizId) {
+
 			console.log(quizId);
 			const apiUrl = `http://localhost:9090/quiz/${quizId}`;
 			fetch(apiUrl, {
@@ -363,6 +391,8 @@
 					alert("Error fetching data");
 				});
 		}
+
+
 	</script>
 
 	<script>

@@ -18,7 +18,7 @@
 			margin-top: 20px;
 			color: #1a202c;
 			text-align: left;
-			background-color: #e2e8f0;
+			background-color: rgb(200, 200,200);
 		}
 
 		.main-body {
@@ -26,7 +26,7 @@
 		}
 
 		.card {
-			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+			box-shadow: 2px 1px 3px 2px rgba(3, 2, 3, 0.5), 0 1px 2px 0 rgba(0, 0, 0, .06);
 		}
 
 		.card {
@@ -78,7 +78,17 @@
 		.container {
 			margin-top: 60px;
 		}
+
+		.parallel-lines {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			padding: 0px;
+			margin: 10px;
+		}
 	</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 	<script>
 		$(function () {
 			$("#header").load("/getCommonHeader");
@@ -233,14 +243,17 @@
 					</div>
 					<div class="row gutters-sm">
 						<div class="col-sm-12 mb-3">
-							<div class="card h-100">
+							<div class="card h-100" style="padding-bottom: 10px;">
 								<div class="card-body">
 									<h6 class="d-flex align-items-center mb-3"><i
 											class="material-icons text-info mr-2">Progresses </i>Quiz Status
 									</h6><small>Attempt Quizes</small>
 									<div class="mb-3" style="height: 5px">
-										<div class="">
-											<h5 id="attempt_quizes">5</h5>
+										<div class="parallel-lines">
+											<h5 id="attempt_quizes">145</h5>
+											<a class="btn btn-outline-primary"
+												href="http://localhost:9090/quiz/page/history"> View Hitory
+												<i title="View Quizes Hitory" class="fas fa-eye"></i> </a>
 										</div>
 									</div>
 								</div>
@@ -280,7 +293,7 @@
 
 							userID = data.payload.userId;
 							console.log(userID);
-						
+
 						} else {
 							console.error(data);
 							alert("failed to fetche the profile data");
@@ -292,10 +305,36 @@
 
 
 			function getUpdatePage(userID) {
-				
-				window.location.href ='http://localhost:9090/user/page/updateUser/' +userID;
+
+				window.location.href = 'http://localhost:9090/user/page/updateUser/' + userID;
 
 			}
+
+
+			function getTotalAttemptQuizCount() {
+
+				// Construct the URL with the email as a query parameter
+				const url = `http://localhost:9090/quiz/attemptQuizList`;
+
+				fetch(url, {
+					method: 'GET',
+				})
+					.then(response => response.json())
+					.then(data => {
+						console.log(data);
+
+						if (data.statusCode === 200) {
+							document.getElementById('attempt_quizes').textContent = data.payload.length;
+
+						} else {
+							console.error(data);
+							alert("failed to fetche the quiz count");
+						}
+
+					})
+
+			} window.addEventListener("load", getTotalAttemptQuizCount());
+
 
 		</script>
 

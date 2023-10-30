@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService {
 			for (User existUser : userList) {
 
 				UserResponse user = new UserResponse();
-				user = CommonUtil.decriptUser(existUser);
+				user = CommonUtil.decriptUser(existUser);				
 				if (existUser.getRole() != null)
 					user.setRole(CommonUtil.decrypt(existUser.getRole().getName()));
 
@@ -98,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponse getUserDetails() {
-		log.info("users data is fetched here : " +CommonUtil.getCurrentUserDetails());
+		log.info("users data is fetched here : " + CommonUtil.getCurrentUserDetails());
 		return CommonUtil.getCurrentUserDetails();
 	}
 
@@ -177,8 +178,23 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	@Bean
-	public BCryptPasswordEncoder bCryptPasswordEncoder() {
+    @Bean
+    BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Override
+	public ResponseEntity<String> changeStatus(long userID) {
+		User user = userRepository.findById(userID).get();
+		int isActive = user.getStatus();
+
+		if (isActive == 1) {
+			user.setStatus(0);
+			log.info("status changed to false");
+		} else {
+			user.setStatus(1);
+		}
+		userRepository.save(user);
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }

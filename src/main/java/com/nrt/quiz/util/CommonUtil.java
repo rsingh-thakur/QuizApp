@@ -30,10 +30,8 @@ public class CommonUtil {
 		CommonUtil.userRepository = userRepository;
 	}
 
-    private static UserRepository userRepository;
+	private static UserRepository userRepository;
 
-	
-	
 	private static final String ALGORITHM = "AES";
 	private static final String TRANSFORMATION = "AES/ECB/PKCS5Padding";
 	private static final String SECRET_KEY = "1234567801234578"; // Replace with your secret key
@@ -120,6 +118,12 @@ public class CommonUtil {
 				response.setPhone(CommonUtil.decrypt(user.getPhone()));
 				response.setUserId(user.getId());
 				response.setCreated_At((user.getCreationDate()));
+
+				if (user.getStatus() == 1)
+					response.setStatus("true");
+				else
+					response.setStatus("false");
+
 				if (user.getRole() != null)
 					response.setRole(CommonUtil.decrypt(user.getRole().getName()));
 			} catch (Exception e) {
@@ -149,10 +153,9 @@ public class CommonUtil {
 	public static UserResponse getCurrentUserDetails() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		UserResponse decriptUser = null;
-		log.info(" address:"+authentication.getName());
 		if (authentication != null) {
 			User userDetails = userRepository.findByEmailAddress(authentication.getName());
-			log.info("user address:"+authentication.getName());
+			log.info("user address:" + authentication.getName());
 			decriptUser = decriptUser(userDetails);
 		}
 		return decriptUser;
@@ -163,5 +166,4 @@ public class CommonUtil {
 		return authentication.getName();
 	}
 
-	
 }

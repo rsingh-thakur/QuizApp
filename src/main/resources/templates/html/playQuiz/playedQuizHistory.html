@@ -64,7 +64,8 @@
 	<div style="margin-top: 70px;">
 		<div class="row">
 			<div class="col-12">
-				<h5 align="center" class="justify-content-center align-center" id="heading"> Welcome to Quizz </h5>
+				<h5 align="center" class="justify-content-center align-center" id="heading"> Quizzes Result Hisotry
+					records </h5>
 			</div>
 		</div>
 
@@ -83,7 +84,7 @@
 			<div class="col-12 d-flex justify-content-end">
 				<div id="refresh-container"
 					style="background-color: rgb(255, 255, 255);  box-shadow: 5px 5px 5px 4px rgb(150, 150, 150); margin-right: 10px; border-radius: 10px;">
-					<button class="btn btn-primary" onclick="getQuizList()">
+					<button class="btn btn-primary" onclick="getPlayedQuizHistory()"> Refresh
 						<i class="fas fa-sync"></i>
 					</button>
 				</div>
@@ -110,9 +111,9 @@
 		<!--	List Quiz page code end here -->
 
 		<script>
-			function getQuizList() {
+			function getPlayedQuizHistory() {
 
-				const apiUrl = "http://localhost:9090/quiz/";
+				const apiUrl = "http://localhost:9090/quiz/attemptQuizList";
 
 				fetch(apiUrl, {
 					method: 'GET',
@@ -125,28 +126,23 @@
 
 
 						if (data && data.payload && Array.isArray(data.payload)) {
-							const quizzes = data.payload;
+							const quizResultList = data.payload;
 
-							for (let i = 0; i < quizzes.length; i++) {
-								const quiz = quizzes[i];  // Access the current quiz object
-								
-								if (quiz.status === true) {
-									
-									const card = document.createElement('div');
-									card.classList.add('col-md-4', 'mb-4');
-									card.innerHTML = `
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <h5 class="card-title"><strong>${quiz.title}</strong></h5>
-                                                <p class="card-text">Description: ${quiz.description}</p>
-                                                <p class="card-text">Max Marks: ${quiz.maxMarks}</p>
-                                                <p class="card-text">Number of Questions: ${quiz.numberOfQuestions}</p>
-                                                <a href="http://localhost:9090/play/page/${quiz.id}" class="btn btn-primary">Play Quiz</a>
-                                            </div>
-                                        </div>
+							for (let i = 0; i < quizResultList.length; i++) {
+								const quizResult = quizResultList[i];  // Access the current quiz object
+								const card = document.createElement('div');
+								card.classList.add('col-md-4', 'mb-4');
+								card.innerHTML = `<div class="card">
+                                     <div class="card-body">
+								     <h5 class="card-title">  <strong>Quiz Name: ${quizResult.attemptQuizName}</strong> </h5>
+                                         <p class="card-text">Correct Answers: ${quizResult.correctAnswers}</p>
+                                         <p class="card-text">Wrong Answers: ${quizResult.wrongAnswers}</p>
+                                         <p class="card-text">Attempted Questions: ${quizResult.attemptQuestions}</p>
+                                         <p class="card-text">Score: ${quizResult.score}</p>
+                                     </div>
+                                 </div>
                                     `;
-									quizCards.appendChild(card);
-								}
+								quizCards.appendChild(card);
 							}
 						} else {
 							alert("No data found or data format is incorrect");
@@ -156,38 +152,11 @@
 						console.error('Error:', error);
 						alert("Error fetching data");
 					});
-			} window.addEventListener('load', getQuizList())
+			} window.addEventListener('load', getPlayedQuizHistory())
 
 
 		</script>
 
-		<script>
-
-			function getQuizQuestions(quizId) {
-				const apiUrl = `http://localhost:9090/question/inQuiz/${quizId}`;
-				fetch(apiUrl, {
-					method: 'GET',
-				})
-					.then(response => response.json())
-					.then(data => {
-						console.log(data);
-						if (data.statusCode === 200) {
-							alert("Quiz is deleted successfully ")
-							getQuizList();
-
-						}
-						else {
-							alert("No Questions found for quiz");
-							getQuizList();
-						}
-					})
-					.catch(error => {
-						console.error('Error:', error);
-						alert("Error fetching data");
-					});
-
-			}
-		</script>
 
 
 

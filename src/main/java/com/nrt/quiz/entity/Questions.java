@@ -31,5 +31,6 @@ public class Questions {
  
     @ManyToOne(fetch = FetchType.EAGER)
     private Quiz quiz;
+    
 }
 

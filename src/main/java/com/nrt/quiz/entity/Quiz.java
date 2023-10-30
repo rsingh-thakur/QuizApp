@@ -17,13 +17,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 @Entity
 @Table(name = "quiz_details")
 public class Quiz {
@@ -34,17 +32,13 @@ public class Quiz {
 	private String description;
 	private String maxMarks;
 	private String numberOfQuestions;
-	private boolean active;
+	private Boolean status;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Category categories;
-   
+
 	@OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private Set<Questions> questions;
-	
-	@OneToMany(mappedBy = "attemptQuiz", cascade = CascadeType.ALL)
-	@JsonIgnore
-	private Set<UserPlayedQuizHistory> quizzes;
-   
+
 }

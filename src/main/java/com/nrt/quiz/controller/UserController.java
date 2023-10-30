@@ -174,4 +174,12 @@ public class UserController {
 
 	}
 	
+	@GetMapping("updateStatus/{userId}")
+	@PreAuthorize("hasRole('ADMIN')  or hasRole('Quiz-UPDATE')")
+	public ResponseEntity<String> updateStatus(@PathVariable("userId") String userId) {
+	   long userID = Long.parseLong(userId);
+	   log.info("update method called");
+		return this.userService.changeStatus(userID);
+	}
+	
 }

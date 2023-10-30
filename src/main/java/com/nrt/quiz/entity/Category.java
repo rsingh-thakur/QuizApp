@@ -19,8 +19,8 @@ public class Category {
     private String title;
     private String description;
 
+
     @OneToMany(mappedBy = "categories", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Quiz> quiz;
-
 }

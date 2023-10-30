@@ -21,10 +21,12 @@ public class UserResponse {
 	private String userType;
 
 	private LocalDate created_At;
-	
+
 	private String Address;
-	
+
 	private String phone;
+	
+	private String status;
 
 	private String role;
 

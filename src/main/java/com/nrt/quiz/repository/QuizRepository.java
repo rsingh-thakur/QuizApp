@@ -16,10 +16,10 @@ public interface QuizRepository extends JpaRepository<Quiz, Long> {
     //    in below, the spelling of category should be similar at that mentioned in entity
     public Page<Quiz> findByCategories(Category category, Pageable pageable);
 
-    public Page<Quiz> findByActive(Boolean active, Pageable pageable);
+    public Page<Quiz> findByStatus(Boolean Status, Pageable pageable);
 
     //we can use AND/OR and it will run custom search querry on its own
-    public Page<Quiz> findByCategoriesAndActive(Category category, Boolean active, Pageable pageable);
+    public Page<Quiz> findByCategoriesAndStatus(Category category, Boolean Status, Pageable pageable);
 
 	public List<Quiz> findAllByCategories(Category categoty);
 

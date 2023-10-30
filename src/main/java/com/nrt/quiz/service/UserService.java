@@ -29,4 +29,6 @@ public interface UserService {
 
 	public UserResponse getUserDetails(long userID);
 
+	public ResponseEntity<String> changeStatus(long userID);
+
 }

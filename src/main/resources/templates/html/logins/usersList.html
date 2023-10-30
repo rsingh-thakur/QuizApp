@@ -62,7 +62,7 @@
 
 					</button>
 					<button class="btn btn-outline-primary" onclick="getUsersList()">
-						 <i class="fas fa-sync"></i> 
+						<i class="fas fa-sync"></i>
 					</button>
 				</div>
 			</div>
@@ -71,7 +71,7 @@
 
 			<div class="justify-content-center align-items-center shadow-lg">
 
-				<table class="table table-striped table-bordered ">
+				<table class="table table-striped table-bordered table-responsive ">
 					<thead>
 						<tr>
 							<th scope="col">Reg.no</th>
@@ -82,6 +82,7 @@
 							<th scope="col">Email Address </th>
 							<th scope="col">Phone No. </th>
 							<th scope="col">Address</th>
+							<th scope="col">Active</th>
 							<th scope="col">Created At</th>
 							<th scope="col">Operations</th>
 						</tr>
@@ -217,6 +218,7 @@
                                     <td>${user.emailAddress}</td>
                                     <td>${user.phone || 'N/A'}</td>
                                     <td>${user.address || 'N/A'}</td>
+                                    <td class="rowId " id="statusId" onclick="updateStatus(${user.status},${user.userId})"> <button id="buttonId" class="btn btn-outline-primary">${user.status}</button></td>
                                     <td>${user.created_At}</td>
                                   <td>
 								     <a href="http://localhost:9090/user/page/updateUser/${user.userId}"><i class="fa-solid fa-pen-to-square mx-2"></i></a>
@@ -235,6 +237,31 @@
 					});
 			} window.addEventListener('load', getUsersList())
 
+
+			function updateStatus(currentStatus, userId) {
+
+				const newStatus = currentStatus ==='true' ? 'false': 'true';
+
+				const button = document.getElementById("buttonId");
+
+				// Make an API call to update the quiz status
+				fetch(`http://localhost:9090/user/updateStatus/${userId}`, {
+					method: 'GET',
+					headers: {
+						'Content-Type': 'application/json',
+					}
+				})
+					.then((response) => {
+						if (response.ok) {
+							// If the response status is 200 (OK), change the button color to green and text to "true"
+							button.innerHTML = "true";
+							getUsersList();
+						}
+					})
+					.catch((error) => {
+						console.error("Error:", error);
+					});
+			}
 
 
 			function deleteUser(userId) {
@@ -278,57 +305,57 @@
 		</script>
 
 
-<script>
+		<script>
 
-		function addUser() {
-			const firstName = document.getElementById('firstName').value;
-			const lastName = document.getElementById('lastName').value;
-			const emailAddress = document.getElementById('emailAddress').value;
-			const password = document.getElementById('password').value;
-			const userType = document.getElementById('userType').value;
-			const phone = document.getElementById('phone').value;
-			const address = document.getElementById('address').value;
-
-
-			const registerRequest = {
-				firstName: firstName,
-				lastName: lastName,
-				emailAddress: emailAddress,
-				password: password,
-				userType: userType,
-				phone: phone,
-				address: address
-			};
-
-			const url = "/user/register";
-
-			fetch(url, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(registerRequest)
-			})
-				.then(data => {
-					if (data.status === 201) {
-						// Redirect to the URL specified in the response
-						getUsersList();
-						alert("Student data added successfully.");
+			function addUser() {
+				const firstName = document.getElementById('firstName').value;
+				const lastName = document.getElementById('lastName').value;
+				const emailAddress = document.getElementById('emailAddress').value;
+				const password = document.getElementById('password').value;
+				const userType = document.getElementById('userType').value;
+				const phone = document.getElementById('phone').value;
+				const address = document.getElementById('address').value;
 
 
-					} else if (data.status === 400) {
-						alert("Submissoin failed, Please try again");
+				const registerRequest = {
+					firstName: firstName,
+					lastName: lastName,
+					emailAddress: emailAddress,
+					password: password,
+					userType: userType,
+					phone: phone,
+					address: address
+				};
 
-					} else {
-						// Handle the case when the login is unsuccessf
-						alert("Operation failed, Please try again");
-					}
+				const url = "/user/register";
+
+				fetch(url, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify(registerRequest)
 				})
-				.catch(error => {
-					alert("An error occurred while trying to registration in.");
-				});
-		}
-	</script>
+					.then(data => {
+						if (data.status === 201) {
+							// Redirect to the URL specified in the response
+							getUsersList();
+							alert("Student data added successfully.");
+
+
+						} else if (data.status === 400) {
+							alert("Submissoin failed, Please try again");
+
+						} else {
+							// Handle the case when the login is unsuccessf
+							alert("Operation failed, Please try again");
+						}
+					})
+					.catch(error => {
+						alert("An error occurred while trying to registration in.");
+					});
+			}
+		</script>
 
 
 
